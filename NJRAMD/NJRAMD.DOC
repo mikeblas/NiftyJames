@@ -1,0 +1,222 @@
+
+
+   Nifty James' Famous (Enhanced) Expanded Memory RAM Disk Drive
+
+   Version 1.15  of  31 May 1987
+
+   (C)  Copyright 1987 By Mike Blaszczak.  All Rights
+   Reserved.  This is a Shareware Program. A $10 donation
+   is requested.
+
+
+Introduction
+------------
+
+   NJRAMD is a device driver that allows you to partition a
+   part of your EMS or EEMS memory as an extremely
+   efficient, extremely fast "RAM disk" drive.  Having a
+   part of your memory configured as a RAM disk will allow
+   you to store temporary files, intermediate files, and
+   other information quickly.
+
+   NJRAMD is compatible with the Lotus/Intel/Microsoft EMS
+   standard, as well as the AST/Quadram/Ashton-Tate EEMS
+   standard.  NJRAMD will function equally well with both
+   systems.
+
+   This program will also run with any version of DOS,
+   staring with version 2.00 or later.  I wrote it under
+   PC-DOS 3.1, and tested it under PC-DOS 2.00 and PC-DOS
+   2.10.  The program should work with MS-DOS, but it
+   hasn't been "officially" tested.
+
+   NJRAMD takes up very little DOS space -- the program
+   uses less than 710 bytes of DOS memory, regardless of how
+   large the disk space is made.  Thus, you can partition
+   a very large RAM disk, and only take up a very small
+   portion of precious DOS memory.
+
+
+Use and Installation
+--------------------
+
+   NJRAMD is installed as a DOS device driver when DOS is
+   first loaded.  Thus, you must specify the device driver
+   in the CONFIG.SYS file of your boot disk or diskette.
+   The entry in the CONFIG.SYS file must be anywhere
+   *after* the specification for the EMS device driver.
+   For example, the EMS driver that came with my Taiwanese
+   EMS clone is called INITIAL.SYS.  I also use ANSI.SYS,
+   which I specify in the CONFIG.SYS file, also.  Thus, my
+   CONFIG.SYS file looks like this:
+
+                      device=\sys\initial.sys
+                      device=\sys\ansi.sys
+                      device=\sys\njramd.sys
+
+   You might also have settings for the BUFFERS, FILES,
+   STACKSPACE, and BREAK settings in your CONFIG.SYS file.
+   These settings can remain unchanged, as they are
+   independent of NJRAMD.
+
+   You can find more information on the uses of the
+   CONFIG.SYS file in the DOS manual.  The section is
+   called "Configuring your system".
+
+   If you install NJRAMD as shown above, NJRAMD will
+   default to a disk of 32 EMS Pages, which is 512
+   kilobytes.  (One EMS Page is equal to 16 kilobytes of
+   storage space.  16 kilobytes stores 16384 bytes, or
+   characters, of information.)  If you would like to have
+   a larger or smaller RAM disk, you must specify the /P
+   option on the same line as NJRAMD in your CONFIG.SYS
+   file.  NJRAMD allocates space in one-page increments.
+   Since each EMS page is 16k bytes long, you can adjust
+   the size of NJRAMD in 16k increments.
+
+   For example, to specify a RAM disk that is 100 pages
+   long, use this line in your CONFIG.SYS file:
+
+                      device=njramd.sys /P100
+
+   NJRAMD will try to take 100 pages of EMS memory -- this
+   will give you 1600k of RAM disk space.
+
+   Of course, you must have enough free EMS memory at the
+   time that NJRAMD is loaded to accomodate the requested
+   size.  If there isn't enough memory, NJRAMD will
+   terminate with an error, and not install itself at all.
+   If you have selected a size that is too big to fit, you
+   will see the message
+
+             Device not installed.
+             Requested size too big to fit.
+
+   Remember that if you don't tell NJRAMD otherwise, it
+   will try to create a 512k RAM Disk.
+
+   If there is no EMS memory available, at all, when NJRAMD
+   tries to load, you will see this message:
+
+            Device not installed.
+            No free EMM Memory.
+
+   If you see this message:
+
+            Device not installed.
+            The EMM is not installed.
+
+   the EMM for your system was not present when NJRAMD
+   loaded.  NJRAMD depends on the EMM for access to the EMS
+   memory.  The specification for your EMM driver *must*
+   appear before the specification for NJRAMD in your
+   CONFIG.SYS file.
+
+   Once you have entered the proper information in your
+   CONFIG.SYS file, you must reboot your computer so that
+   the information in the file will take effect.  When
+   NJRAMD installs, it will print a copyright message, and
+   some status information reguarding the memory that it
+   has taken, and the amount of memory that is available as
+   a RAM disk.
+
+   If you have any problems installing NJRAMD, please feel
+   free to write to me.  I'd be happy  to help!
+
+
+Clicking
+--------
+
+   I programmed NJRAMD to click the system's speaker every
+   time the disk was accessed.  Since a RAM disk is silent,
+   it's often hard to tell when it is working.  To
+   compensate for the fact that there is no "whirring" or
+   "chirping" going on while the RAM disk is active, the
+   speaker clicks while the program accesses the memory.
+
+   If you find this annoying, you can turn it off by
+   specifying the "/S" option in the CONFIG.SYS entry.  For
+   example,
+                         device=njramd.sys /P16 /S
+
+   would create a 16-page (256k byte) RAM disk that does
+   not click when it is accessed.  If you specify the /S
+   option, NJRAMD will print the message
+
+            Clicking Suppressed.
+
+   when it is installed.
+
+
+
+Technical Information
+--------- -----------
+
+   I have included the assembly language source code in
+   this .ARC file (or on your white distribution disk) for
+   your reference.  You do not need it to run the program.
+   If you are a programmer, or simply have an interest in
+   "what makes it go", you can take a look at the
+   NJRAMD.ASM file.  I've heavily commented it, and
+   therefore will not describe it in greater detail here.
+
+
+Shareware
+---------
+
+   This program is a work of Shareware.  If you use the
+   program, I expect you to end a donation.  I'm asking $10
+   for the program, but, if you would like to send $5 or
+   $25, that's fine, too.
+
+   Registering your copy of NJRAMD will automatically
+   entitle you to free updates.  There currently is one
+   change planned for later release, and that is making the
+   drive survive "warm boots".  That is, the next version
+   of NJRAMD will not be erased if you use
+   <CTRL>+<ALT>+<DEL> to reset your system.
+
+|  This planned change is unfeasible, however.  Since the
+|  EMS manager overwrites the information in the expanded
+|  memory when it is installed, the RAM Drive's contents
+;  will always be erased after a warm boot.
+
+   If you would like to write to me, my address is
+
+         Mike Blaszczak
+         112 Verlinden Drive
+         Monroeville, PA   15146-2041
+
+   I'm also available on Participate On The SOURCE as NIFTY
+   JAMES.  My SOURCE ID is BCB922, and you're welcome to
+   send me SMAIL.  If you want to contact me on CompuServe,
+   my ID there is 76210,1546.  I'm also available on the
+   NWI Conferencing System, as NIFTY JAMES or MIKE B.
+
+   Please feel free to send your comments, questions,
+   suggestions, donations, marriage proposals, and
+   get-rich-quick schemes.
+
+
+A Special Note
+--------------
+
+   This program would not have been possible without the
+   outstanding generosity and good will of Doctor File
+   Finder and Bob Brody.
+
+   Hats off to a couple of wonderful people!
+
+|  Doctor File Finder managed to find a bug in the first
+|  version that sometimes caused the program to trash the
+|  files on the disk -- the GetSector procedure wasn't
+|  working properly.  The problem has been corrected in
+|  this version, and the program's optimization in the
+|  GetSector proceudre is now fully functional.
+
+|  Again, the Good Doctor helped me track down the bug that
+|  sometimes caused this device driver to ignore the /Page
+|  option.  Thanks, Doc!  The fix was made, and this is
+|  now Version 1.15.
+
+
