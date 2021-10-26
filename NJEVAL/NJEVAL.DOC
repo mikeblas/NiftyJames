@@ -2,8 +2,11 @@
 
 
 Nifty James' Famous Expression Evaluator
-Version 1.01 of 1 March 1988
-(C) Copyright 1988 by Mike Blaszczak
+Version 1.01 of 01 March 1988
+Version 1.10 of 12 February 1989
+Version 1.15 of 1 June 1989 
+Version 1.20 of 10 July 1989
+(C) Copyright 1988, 1989 by Mike Blaszczak
 
 
 THIS PROGRAM MAY NOT BE REDISTRIBUTED FOR PROFIT WITHOUT THE PRIOR WRITTEN
@@ -80,17 +83,18 @@ Exponentiation
 The operator precedence used is similar to most high level languages, as
 well.  Multiplication and division are "higher" than addition and
 subtraction.  Expnentiation, represented by the carat (^) is lower than
-all four operators.
+all four operators.  You will find that you can exponentiate values
+by using ** in place of the carat.
 
 Thus, you can use
 
-     NJEVAL 2^1/2
+     NJEVAL 2**1/2
 
 to find 2^0.5.
 
 It should be noted, by the way, that this is a good way to find
 roots.  The program has no sqrt() or curt() functions.  You may
-recall from your math courses that, to find the yth root of x, you
+recall from your math courses that, to find the y-th root of x, you
 can do
 
      x^(1/y)
@@ -167,6 +171,12 @@ These functions are supported by NJEVAL:
           sec(x)  -  secant of the angle x radians
           sin(x)  -  sine of the angle x radians
           tan(x)  -  tangent of the angle x radians
+	  sinh(x) -  hyperbolic sine of x
+	  cosh(x) -  hyperbolic cosine of x
+	  tanh(x) -  hyperbolic tangent of x
+	  sech(x) -  hyperbolic secant of x
+	  csch(x) -  hyperbolic cosecant of x
+
 
 If any of these functions are passed invalid values, NJEVAL will
 abort with an error.  The arc-trig functions, for example, cannot
@@ -206,6 +216,40 @@ Microsoft C.  Recompiling the program with the math coprocessor-specific
 libraries will allow much greater accuracy to be realized.  The speed
 improvement these chips bring about won't be noticable in NJEVAL's small
 reliance on the actual math of the operations.
+
+
+Memory
+------
+
+By popular demand, a "memory" feature has been added to NJEVAL.  If
+you make a computation using NJEVAL, the result is remembered and may
+be used as needed in any further invocation of NJEVAL.
+
+For example, using the command
+
+	NJEVAL SIN(1)
+
+would display the sine of one radian.  If you executed the command
+
+	NJEVAL ASIN(@)
+
+next, you'd get, effectively, ASIN(SIN(1))... the result would be
+one.  Similarly, if you used
+
+	NJEVAL	35+15
+
+NJEVAL would print 50.  If you did
+
+	NJEVAL	@+100
+
+a result of 150 would be displayed.
+
+NJEVAL stores the results in your machine's environment.  You may see
+the previous result by typing the SET command; DOS will list the
+environment variables it has stored.  NJEVAL's environment variable
+is listed on the line "NJEVAL".
+
+This feature is new as of Version 1.20.
 
 
 Operation
@@ -338,6 +382,26 @@ to the public.
 A big THANK YOU to everyone who will register this program and has
 registered my other programs!  Today, I got a "cheque" from England.  I
 was pretty impressed, I mean to tell you.  Thanks!
+
+Version 1.10 fixes up the sourcecode for this program a little bit. 
+I wrote this almost a year ago, before I got BRIEF, the famous
+programming editor.  I reworked all of the sourcecode to fit the
+coding style I now use.  Version 1.10 also allows you to use the
+double-asterisk in place of the up-arrow for exponentiation.
+
+Version 1.15 fixes a problem spotted by a user who got the program
+from the July 1989 issue of "Compute/PC!" Magazine.  The reader noted
+that the program wouldn't handle logs of fractional values; this was
+a simple error on my part; I checked for the wrong range in the
+functions that evaluated these expressions.
+
+This version of the program also adds hyperbolic trigonometric
+functions; sinh(), tanh(), cosh(), sech(), and csch().  I'd have
+liked to implement the inverses of these functions, but I had no
+reference that define methods for computing them.  (I tried to work
+it out myself, but I met with little luck there, too -- it never
+seemed to work quite right.)
+
 
 
 Crystal Ball

@@ -1,14 +1,16 @@
 
 /****************************************************************************
- *									    *
- *  Nifty James' Famous Expression Evaluator				    *
- *  Function Module							    *
- *									    *
- *  Version 1.00 for Microsoft C 5.00 under MS/PC DOS			    *
- *  Version 1.01							    *
- *									    *
- *  (C) Copyright 1988 by Mike Blaszczak     1 March 1988		    *
- *									    *
+ *									    															 *
+ *  Nifty James' Famous Expression Evaluator				    						 *
+ *  Function Module																			 *
+ *																									 *
+ *  Version 1.00 for Microsoft C 5.00 under MS/PC DOS								 *
+ *  Version 1.01																				 *
+ *  Version 1.10 for Microsoft C 5.10 under MS/PC-DOS								 *
+ *  Version 1.15 for Microsoft C 5.10 under MS/PC-DOS                       *
+ *																									 *
+ *  (C) Copyright 1988 by Mike Blaszczak     1 March 1988						 *
+ *																									 *
  ***************************************************************************/
 
 #include <math.h>
@@ -28,13 +30,13 @@
 #define BAD_BIN         11
 #define INTERNAL        12
 #define NO_OPERAND      13
-#define NOTHING_2DO	14
-#define DIV_BY_0	15
-#define INV_EXP		16
-#define UNK_FUNC	17
-#define BAD_TRIG	18
-#define BAD_FACT	19
-#define BAD_LOG		20
+#define NOTHING_2DO		14
+#define DIV_BY_0			15
+#define INV_EXP			16
+#define UNK_FUNC			17
+#define BAD_TRIG			18
+#define BAD_FACT			19
+#define BAD_LOG			20
 
 extern void check01(double);
 extern void check1plus(double);
@@ -52,7 +54,8 @@ double passed;
 double doacos(passed)
 double passed;
 {
-	check01(passed);
+	if (fabs(passed) > 1.0)
+		printerror(BAD_TRIG);
 	return(acos(passed));
 }
 
@@ -89,7 +92,8 @@ double passed;
 double doasin(passed)
 double passed;
 {
-	check01(passed);
+	if (fabs(passed) > 1.0)
+		printerror(BAD_TRIG);
 	return(asin(passed));
 }
 
@@ -158,7 +162,7 @@ double passed;
 double doln(passed)
 double passed;
 {
-	if(passed < 1.0)
+	if(passed <= 0.0)
 		printerror(BAD_LOG);
 	return(log(passed));
 }
@@ -168,7 +172,7 @@ double passed;
 double dolog(passed)
 double passed;
 {
-	if(passed < 1.0)
+	if(passed <= 0.0)
 		printerror(BAD_LOG);
 	return(log10(passed));
 }
@@ -220,3 +224,51 @@ double passed;
 	return(tan(passed));
 }
 
+/* ----------------------------------------------------------------------- */
+
+double docosh(passed)
+double passed;
+{
+	return (exp(passed)+exp(-passed))/2;
+}
+
+/* ----------------------------------------------------------------------- */
+
+double dosinh(passed)
+double passed;
+{
+	return (exp(passed)-exp(-passed))/2;
+}
+
+/* ----------------------------------------------------------------------- */
+
+double dotanh(passed)
+double passed;
+{
+	if (passed == 0.0)
+		printerror(BAD_TRIG);
+	return (exp(passed)-exp(-passed)) / (exp(passed)+exp(-passed));
+}
+
+/* ----------------------------------------------------------------------- */
+
+double docsch(passed)
+double passed;
+{
+	if (passed == 0.0)
+		printerror(BAD_TRIG);
+	else
+		return 1.0/dosinh(passed);
+}
+
+/* ----------------------------------------------------------------------- */
+
+double dosech(passed)
+double passed;
+{
+	if (passed == 0.0)
+		printerror(BAD_TRIG);
+	else
+		return 1.0/docosh(passed);
+}
+

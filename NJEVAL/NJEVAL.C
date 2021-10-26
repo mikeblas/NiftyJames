@@ -2,25 +2,27 @@
 /****************************************************************************
  *                                                                          *
  *  Nifty James' Famous Expression Evaluator                                *
- *  Main Module								    *
+ *  Main Module																				 *
  *                                                                          *
  *  Version 1.00 for Microsoft C 5.00 under MS/PC DOS                       *
- *  Version 1.01							    *
- *									    *
- *  Note:  While the VAX switch exists, this sourcecode has not been	    *
- *	  completely modified for the VAX systems.			    *
+ *  Version 1.01							    												 *
+ *  Version 1.10 for Microsoft C 5.10 under MS/PC DOS								 *
+ *  Version 1.20                                                            *
+ *									    															 *
+ *  Note:  While the VAX switch exists, this sourcecode has not been			 *
+ *	  completely modified for the VAX systems.			    						 *
  *                                                                          *
- *  (C) Copyright 1988 by Mike Blaszczak     1 March 1988		    *
+ *  (C) Copyright 1988 by Mike Blaszczak     1 March 1988		    			 *
  *                                                                          *
  ***************************************************************************/
 
 #include <malloc.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#ifndef	MSDOS			/* avoid redef error (defined by some
-					compilers		*/
+#ifndef	MSDOS			/* avoid redef error (defined by some compilers)		*/
 #define MSDOS			/* MSDOS version		*/
 #endif
 
@@ -63,52 +65,66 @@ extern double dosec(double);
 extern double dosin(double);
 extern double dotan(double);
 
+extern double dosinh(double);
+extern double docosh(double);
+extern double dotanh(double);
+extern double dosech(double);
+extern double docsch(double);
+
+extern void int_2E(char *);
+
 void dumptree();		/* forward declaration	*/
 
 struct functions_entry {
-        double (*execute)(double);
-        char *name;
-        char *describe;
+	double (*execute)(double);
+	char *name;
+	char *describe;
 };
 
 struct functions_entry functions_list[] =
 {
-        {doabs,         "abs",          "absolute value"},
-        {doacos,        "acos",         "arccosine"},
-        {doacot,        "acot",         "arccotangent"},
-        {doacsc,        "acsc",         "arccosecant"},
-        {doasec,        "asec",         "arcsecant"},
-        {doasin,        "asin",         "arcsine"},
-        {doatan,        "atan",         "arctangent"},
-        {docos,         "cos",          "cosine"},
-        {docot,         "cot",          "cotangent"},
-        {dodeg,         "deg",          "convert radians to degrees"},
-        {doexp,         "exp",          "e to a power"},
-        {dofact,        "fact",         "factorial"},
-        {doln,          "ln",           "natural logarithm"},
-        {dolog,         "log",          "base 10 logarithm"},
-        {dopi,          "pi",           "pi units"},
-        {dorad,         "rad",          "convert degrees to radians"},
-        {dosec,         "sec",          "secant"},
-        {dosin,         "sin",          "sine"},
-        {dotan,         "tan",          "tangent"},
-        {NULL,          "0",            "0"},
+	{doabs,         "abs",          "absolute value"},
+	{doacos,        "acos",         "arccosine"},
+	{doacot,        "acot",         "arccotangent"},
+	{doacsc,        "acsc",         "arccosecant"},
+	{doasec,        "asec",         "arcsecant"},
+	{doasin,        "asin",         "arcsine"},
+	{doatan,        "atan",         "arctangent"},
+	{docos,         "cos",          "cosine"},
+	{docot,         "cot",          "cotangent"},
+	{dodeg,         "deg",          "convert radians to degrees"},
+	{doexp,         "exp",          "e to a power"},
+	{dofact,        "fact",         "factorial"},
+	{doln,          "ln",           "natural logarithm"},
+	{dolog,         "log",          "base 10 logarithm"},
+	{dopi,          "pi",           "pi units"},
+	{dorad,         "rad",          "convert degrees to radians"},
+	{dosec,         "sec",          "secant"},
+	{dosin,         "sin",          "sine"},
+	{dotan,         "tan",          "tangent"},
+	{dosinh,			 "sinh",			  "hyperbolic sine"},
+	{docosh,			 "cosh",			  "hyperbolic cosine"},
+	{dotanh,			 "tanh",			  "hyperbolic tangent"},
+	{dosech,			 "sech",			  "hyperbolic secant"},
+	{docsch,			 "csch",         "hyperbolic cosecant"},
+	{NULL,          "0",            "0"},
 };
 
 /*      how a token is stored           */
 
 struct token {
-        int kind;               /*  kind of token this is               */
-        double value;           /*  value of a NUMBER                   */
-        char oper;              /*  character of BIN_OP or UNI_OP       */
-        char *fname;            /*  name of FUNCTION                    */
-        int column;             /*  column where this came from         */
-        struct token *previous; /*  link to the previous token          */
-        struct token *next;     /*  link to the next token              */
+	int kind;               /*  kind of token this is               */
+	double value;           /*  value of a NUMBER                   */
+	char oper;              /*  character of BIN_OP or UNI_OP       */
+	char *fname;            /*  name of FUNCTION                    */
+	int column;             /*  column where this came from         */
+	struct token *previous; /*  link to the previous token          */
+	struct token *next;     /*  link to the next token              */
 };
 
-/* poiners to the head and tail of the list.  gothrough is used to
-        walk the list           */
+/* poiners to the head and tail of the list.
+	gothrough is used to walk the list
+*/
 
 struct token *head, *tail, *gothrough;
 
@@ -123,11 +139,11 @@ struct token *rightmost, *leftmost, *walker;
 
 struct token *after, *before;
 
-int     binvalid;               /* 0 if binary op is vaild in this context */
-int     univalid;               /* 0 if unary operator is valid in context */
-int     rparen, lparen;         /* count of right and left parenthesis     */
+int		binvalid;               /* 0 if binary op is vaild in this context */
+int		univalid;               /* 0 if unary operator is valid in context */
+int		rparen, lparen;         /* count of right and left parenthesis     */
 
-int     topprecedence;          /* precedence of the highst precedence     */
+int		topprecedence;          /* precedence of the highst precedence     */
 
 /* this is a list of errors             */
 
@@ -173,24 +189,40 @@ char    *errorlist[] = {
         "Bad value for factorial",
 #define BAD_LOG         20
         "Bad value for logarihtm",
-#define NO_UNIVAL	21
-	"No operator for unary operator",
+#define NO_UNIVAL			21
+		"No operator for unary operator",
+#define NO_STORAGE		22
+		"No value stored in NJEVAL memory"
 };
 
 /*      These character lists are valid for each token they name        */
 /*      they are in the arrays by order of precedence; lower precedence
         is listed first                                                 */
 
-char vbinops[] = "+-/*%^";              /* valid binary operators       */
-char vuniops[] = "-";                   /* valid unary operators        */
-char vnum[]    = "0123456789.";         /* valid numbers                */
-char func[]    = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";  /* valid function names */
+char vbinops[] = "+-/*%^";						/* valid binary operators			*/
+char vuniops[] = "-";							/* valid unary operators			*/
+char vnum[]    = "@0123456789.";				/* valid numbers						*/
+char func[]    = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";	/* valid function names		*/
 
 char *work;                     /*  pointer to step through line        */
 char line[250];                 /*  line to parse                       */
-char progname[15];              /*  our program's name                  */
+char progname[15];					/*  our program's name						*/
 
-double result = 0.0;            /* the crux of the biscut               */
+double result = 0.0;            	/* the crux of the biscut					*/
+char	strresult[64];					/* ASCII version of the result			*/
+
+
+/* ----------------------------------------------------------------------- */
+/* ANSI prototypes																			*/
+
+void	setprogname(char *argv0);
+void	printerrorat(int errnum, int col);
+void	printerror(int errnumber);
+void	check01(double value);
+void	killbrackets(struct token *place);
+struct token *newtoken(void);
+void	dumptree(void);
+
 
 /* ---------------------------------------------------------------------- */
 /* stores the program's name in the progname array                        */
@@ -198,16 +230,16 @@ double result = 0.0;            /* the crux of the biscut               */
 void setprogname(argv0)
 char *argv0;
 {
-        register char *start, *end;
+	register char *start, *end;
 
 #ifdef MSDOS
 	/* handle DOS <3.0 correctly	*/
 
 	if (strcmp(argv0, "C") == 0)
-	{
+		{
 		strcpy(progname, "NJEVAL");
 		return;
-	}
+		}
 #endif
 
 	/*  the name starts after the last backslash	*/
@@ -218,15 +250,17 @@ char *argv0;
 		start++;
 
 	/*  and before the period			*/
-        end = strrchr(start, '.');
+   end = strrchr(start, '.');
 	if (end == NULL)
 		end = argv0 + strlen(argv0);
 
 	/* 	copy and uppercase it			*/
-        strncpy(progname, start, (end-start));
-        strupr(progname);
-        return;
+	strncpy(progname, start, (end-start));
+	strupr(progname);
+
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /* print an error and flag a character; col is offset in line[]           */
@@ -234,130 +268,162 @@ char *argv0;
 void printerrorat(errnum, col)
 int errnum, col;
 {
-        register int ctr;
+	register int ctr;
 
-        printf("%s: error number %d: %s\n%s\n",
-                        progname, errnum, errorlist[errnum], line);
+	printf("%s: error number %d: %s\n%s\n",progname, errnum,
+		errorlist[errnum], line);
 
 	/*	point to specified place	*/
-        for(ctr = 1; ctr<col; ctr++)
-                putchar(' ');
-        puts("^");
-        exit(1);
+	for(ctr = 1; ctr<col; ctr++)
+		putchar(' ');
+	puts("^");
+	exit(1);
 }
+
+
+/* ---------------------------------------------------------------------- */
+/* nsetenv() is a new setenv() routine.  it sets an environment variable
+	to a specified string.  however, this version tweaks DOS into setting
+	the *real* environment, so what we say will be remembered after we
+	are already gone.
+*/
+
+void	nsetenv(char *item, char *setting)
+{
+	char		cmd_line[81];
+
+	if (item == NULL || setting == NULL)
+		return;
+
+	strcpy(cmd_line, " SET ");
+	strcat(cmd_line, item);
+	strcat(cmd_line, "=");
+	strcat(cmd_line, setting);
+
+	cmd_line[0] = (char) strlen(&cmd_line[1]);
+	cmd_line[cmd_line[0]+1] = 0x0D;
+
+	int_2E(cmd_line);
+	return;
+}
+
 
 /* ---------------------------------------------------------------------- */
 /*      print an error and flag the current spot on the line              */
 
-void printerror(errnumber)
-int errnumber;
+void printerror(int errnumber)
 {
-        printerrorat(errnumber, (int) (work-line));
+	printerrorat(errnumber, (int) (work-line));
 }
+
 
 /* ---------------------------------------------------------------------- */
 /* check to see if a value is in [0,1]                                    */
 
-void check01(value)
-double value;
+void check01(double value)
 {
-        if (value > 1.0 || value < 0.0)
-                printerror(BAD_TRIG);
-        else
-                return;
+	if (value > 1.0 || value < 0.0)
+		printerror(BAD_TRIG);
+	else
+		return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /* check to see if a value is in [0,1]                                    */
 
-void check1plus(value)
-double value;
+void check1plus(double value)
 {
-        if(value < 1.0 && value > -1.0)
-                printerror(BAD_TRIG);
-        else
-                return;
+	if(value < 1.0 && value > -1.0)
+		printerror(BAD_TRIG);
+	else
+		return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /* delete the parenthesis surrounding a term                              */
 
-void killbrackets(place)
-struct token *place;
+void killbrackets(struct token *place)
 {
-        struct token *leftside;
-        struct token *rightside;
+	struct token *leftside;
+	struct token *rightside;
 
 	/* leftside points to left hand parenthesis, 
 	   rightside to the right	*/
 
-        leftside = place->previous;
-        rightside = place->next;
-
+	leftside = place->previous;
+	rightside = place->next;
 
 	/* before is the token before the parenthesis	*/
 	before = leftside->previous;
+
 	/* after is the token after it			*/
 	after = leftside->next;
+
 	/* make the token after the parenthesis point back to the
 		token before the parenthesis		*/
 	after->previous = before;
 
 	/* if this is the first token, change head	*/
-        if(leftside == head)
-        {
-        	head = place;
-	        place->previous = NULL;
-        }
-        else
+	if(leftside == head)
+		{
+		head = place;
+	   place->previous = NULL;
+		}
+	else
+
+
 	/* otherwise, change the one before the parenthesis to
 		point to the one after it		*/
-        	before->next = after;
+		before->next = after;
 
 	/* same thing, wrong side		*/
 
 	before = rightside->previous;
-        after = rightside->next;
-        before->next = after;
-        if(rightside == tail)
-        {
-                tail = place;
-                place->next = NULL;
-        }
-        else
-                after->previous = before;
+	after = rightside->next;
+	before->next = after;
+	if(rightside == tail)
+		{
+		tail = place;
+		place->next = NULL;
+		}
+	else
+		after->previous = before;
 
 #ifdef DEBUG
-                dumptree();
+	dumptree();
 #endif
 
-        /* free up that memory */
+   /* free up that memory */
 	free(leftside);
-        free(rightside);
-        return;
+	free(rightside);
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /* make a spot for a new token                                            */
 
 struct token *newtoken()
 {
-        register struct token *temporary;
+	register struct token *temporary;
 
 	/* try to get space	*/
-        temporary = malloc(sizeof(struct token));
-        if (temporary == NULL)
-                printerror(NO_MEMORY);
+	temporary = malloc(sizeof(struct token));
+	if (temporary == NULL)
+		printerror(NO_STORAGE);
 
 	/* zero out the new space	*/
 
-        temporary->fname = NULL;
-        temporary->value = 0.0;
-        temporary->previous = temporary->next = NULL;
-        temporary->kind = 0;
-        temporary->oper = '\0';
-        temporary->column = (int) (work-line);
-        return(temporary);
+	temporary->fname = NULL;
+	temporary->value = 0.0;
+	temporary->previous = temporary->next = NULL;
+	temporary->kind = 0;
+	temporary->oper = '\0';
+	temporary->column = (int) (work-line);
+
+	return(temporary);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -366,49 +432,49 @@ struct token *newtoken()
 void dumptree()
 {
 #ifdef DEBUG
-        register struct token *dumper;
+	register struct token *dumper;
 
-        dumper = head;
-        while(dumper != NULL)
-        {
-                printf("kind = ");
-                switch(dumper->kind)
-                {
-                        case BIN_OP :   puts("binary operator");
-                                        break;
+	dumper = head;
+	while(dumper != NULL)
+		{
+		printf("kind = ");
+		switch(dumper->kind)
+			{
+			case BIN_OP :	puts("binary operator");
+								break;
 
-                        case UNI_OP :   puts("unary operator");
-                                        break;
+			case UNI_OP :	puts("unary operator");
+								break;
 
-                        case RT_PAREN:  puts("right parenthesis");
-                                        break;
+			case RT_PAREN:	puts("right parenthesis");
+								break;
 
-                        case LT_PAREN:  puts("left parenthesis");
-                                        break;
+			case LT_PAREN:	puts("left parenthesis");
+								break;
 
-                        case NUMBER:    puts("number");
-                                        break;
+			case NUMBER:	puts("number");
+								break;
 
-                        case FUNCTION:  puts("function");
-                                        break;
+			case FUNCTION:	puts("function");
+								break;
 
-                        default:        printf("unknown, type = %d\n",
-                                                        dumper->kind);
-                }
+			default:			printf("unknown, type = %d\n", dumper->kind);
+			}
 
-                printf("fname = ");
-                if(dumper->fname == NULL)
-                        puts("NULL");
-                else
-                        printf("\"%s\"\n", dumper->fname);
+		printf("fname = ");
+		if(dumper->fname == NULL)
+			puts("NULL");
+		else
+			printf("\"%s\"\n", dumper->fname);
 
-                printf("oper = '%c'\n", dumper->oper);
-                printf("value = %f\n\n", dumper->value);
-                dumper = dumper->next;
-        }
+		printf("oper = '%c'\n", dumper->oper);
+		printf("value = %f\n\n", dumper->value);
+		dumper = dumper->next;
+		}
 #endif
-        return;
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /* evaluate a simple expression; place points at the operator or
@@ -420,372 +486,399 @@ void dumptree()
 void evaluate(place)
 struct token *place;
 {
-        double operand1, operand2;
-        struct token *after, *before, *uniop;
-        int evaluated, looker;
+	double operand1, operand2;
+	struct token *after, *before, *uniop;
+	int evaluated, looker;
 
 	/* if its a number, then what's to do?	*/
 
-        if(place->kind == NUMBER)
-        {
-                result = place->value;
-                return;
-        }
+	if(place->kind == NUMBER)
+		{
+		result = place->value;
+		return;
+		}
 
 	/*  if its not evaluatable, give up	*/
 
-        if(place->kind != BIN_OP && place->kind != UNI_OP &&
-                place->kind != FUNCTION)
-        {                       /* big trouble in little china! */
-                dumptree();
-                printerror(INTERNAL);
-        }
+	if(place->kind != BIN_OP && place->kind != UNI_OP &&
+		place->kind != FUNCTION)
+		{                       /* big trouble in little china! */
+		dumptree();
+		printerror(INTERNAL);
+		}
 
 	/*  before points to the token before the place, after is after it */
 
-        before = place->previous;
-        after = place->next;
+	before = place->previous;
+	after = place->next;
 
-        switch(place->kind)
-        {
-        case BIN_OP:            /* evaluate a binary operator   */
-                {
-                        if(place->next == NULL || place->previous == NULL)
-                                printerrorat(NO_OPERAND, place->column);
-                        operand1 = place->previous->value;
-                        operand2 = place->next->value;
+	switch(place->kind)
+		{
+		case BIN_OP:            /* evaluate a binary operator   */
+						if(place->next == NULL || place->previous == NULL)
+							printerrorat(NO_OPERAND, place->column);
+						operand1 = place->previous->value;
+						operand2 = place->next->value;
 				/* execute operation with operands	*/
-                        switch (place->oper)
-                        {
-                                case '+':       result = operand1+operand2;
-                                                break;
-                                case '-':       result = operand1-operand2;
-                                                break;
-                                case '*':       result = operand1*operand2;
-                                                break;
-                                case '/':       if (operand2 == 0)
-                                                        printerrorat(DIV_BY_0, after->column);
-                                                result = operand1/operand2;
-                                                break;
-                                case '%':       if (operand2 == 0)
-                                                        printerrorat(DIV_BY_0, after->column);
-                                                result = fmod(operand1, operand2);
-                                                break;
-                                case '^':       result = pow(operand1, operand2);
-                                                break;
-                                default:        printerror(INTERNAL);
-                        }
-                }
-                break;
-        case UNI_OP:    /* evaluate a unary operator    */
-                {
-                        if(place->next == NULL)
-                                printerrorat(NO_OPERAND, place->column);
-			uniop = place;
-			while(uniop->next->kind != NUMBER)
-				if (uniop == NULL)
-					printerrorat(NO_UNIVAL, place->column);
-				else
-					uniop = uniop->next;				
-                        operand1 = uniop->next->value;
-                        switch (place->oper)
-                        {
-                                case '-':       result = -operand1;
-                                                break;
-                                default:        printerror(INTERNAL);
-                        }
-                }
-                break;
-        case FUNCTION:  /* evaluate a function  */
-                {
-                        if(place->next == NULL)
-                                printerrorat(NO_OPERAND, place->column);
-                        if(place->next->kind != NUMBER)
-                                printerror(INTERNAL);
+						switch (place->oper)
+							{
+							case '+':	result = operand1+operand2;
+											break;
+							case '-':	result = operand1-operand2;
+											break;
+							case '*':	result = operand1*operand2;
+											break;
+							case '/':	if (operand2 == 0)
+												printerrorat(DIV_BY_0, after->column);
+											result = operand1/operand2;
+											break;
+							case '%':	if (operand2 == 0)
+												printerrorat(DIV_BY_0, after->column);
+											result = fmod(operand1, operand2);
+											break;
+							case '^':	result = pow(operand1, operand2);
+											break;
+							default:		printerror(INTERNAL);
+							}
+						break;
+		case UNI_OP:    /* evaluate a unary operator    */
+						if(place->next == NULL)
+							printerrorat(NO_OPERAND, place->column);
+						uniop = place;
+						while(uniop->next->kind != NUMBER)
+							if (uniop == NULL)
+								printerrorat(NO_UNIVAL, place->column);
+							else
+								uniop = uniop->next;				
+	               operand1 = uniop->next->value;
+   	            switch (place->oper)
+							{
+							case '-':	result = -operand1;
+											break;
+							default:    printerror(INTERNAL);
+							}
+						break;
 
-                        operand1 = place->next->value;
+		case FUNCTION:  /* evaluate a function  */
+						if(place->next == NULL)
+							printerrorat(NO_OPERAND, place->column);
+						if(place->next->kind != NUMBER)
+							printerror(INTERNAL);
 
-                        evaluated = 0;
-                        looker = 0;
-                        while(functions_list[looker].execute != NULL)
-                        {
-                                if(strnicmp(functions_list[looker].name, place->fname, 3) == 0)
-                                {
-                                        result = (*functions_list[looker].execute)(operand1);
-                                        evaluated = 1;
-                                }
-                                looker++;
-                        }
-                        if(!evaluated)
-                                printerrorat(UNK_FUNC, place->column);
-                }
-                break;
-        default:
-                        printerror(INTERNAL);
-        }
+						operand1 = place->next->value;
 
-        /* delete operands, as appropriate              */
-        switch(place->kind)
-        {
-                case FUNCTION:
+						evaluated = 0;
+						looker = 0;
+						while(functions_list[looker].execute != NULL)
+							{
+							if(strnicmp(functions_list[looker].name, place->fname,
+								 strlen(functions_list[looker].name)) == 0)
+								{
+								result = (*functions_list[looker].execute)(operand1);
+								evaluated = 1;
+								break;
+								}
+							looker++;
+							}
+						if(!evaluated)
+							printerrorat(UNK_FUNC, place->column);
+						break;
+
+		default:	printerror(INTERNAL);
+		}
+
+	/* delete operands, as appropriate              */
+	switch(place->kind)
+		{
+		case FUNCTION:
         /* free space used by function name             */
-                        free(place->fname);
-                        place->fname = NULL;
+			free(place->fname);
+			place->fname = NULL;
+		
+			place = place->next;
+			place->value = result;
 
-                        place = place->next;
-                        place->value = result;
-
-/*                      killbrackets(place);            */
-                        break;
-                case BIN_OP:
+			break;
+		case BIN_OP:
         /* delete operator and right operand            */
-                        before->next = after->next;
-                        before->next->previous = before;
+			before->next = after->next;
+			before->next->previous = before;
 
         /* change value of right operand to evaluated   */
-                        before->value = result;
-                        before->kind = NUMBER;
+			before->value = result;
+			before->kind = NUMBER;
 
         /* update tail, if need be                      */
-                        if(after == tail)
-                                tail = before;
-                        break;
-                case UNI_OP:
+			if(after == tail)
+				tail = before;
+			break;
+
+
+		case UNI_OP:
 			uniop->next->value = result;
 			before->next = after;
 			after->previous = before;
 			break;
-                default:
-                        printerror(INTERNAL);
+
+	    default:	printerror(INTERNAL);
         }
 
 #ifdef DEBUG
-        printf("%.20g\n", result);
+	printf("%.20g\n", result);
 #endif
-        return;
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /*      insert a number into the list                                     */
 
 void getnumber()
 {
-        double thenumber = 0.0;		/* the number that was there	*/
-        double multiplier;		/* weight of the digit read	*/
-        int exponent = 0;		/* the exponent we found	*/
-        char haddecimal = 0;		/* 1 if we saw '.', 0 otherwise */
-        char exponentmode = 0;		/* 1 if we had E | D, 0 other	*/
-        struct token *newnumber;	/* pointer to the number token	*/
+	double thenumber = 0.0;			/* the number that was there		*/
+	double multiplier;				/* weight of the digit read		*/
+	int exponent = 0;					/* the exponent we found			*/
+	char haddecimal = 0;				/* 1 if we saw '.', 0 otherwise	*/
+	char exponentmode = 0;			/* 1 if we had E | D, 0 other		*/
+	struct token *newnumber;		/* pointer to the number token	*/
+	char *envplace;					/* used when checking @ recall	*/
 
-        for( ; (strchr("0123456789.DE", *work) != NULL) &&
-                    *work ; work++)
-        {
-                if (*work == '.')
-                {
-                        if (haddecimal || exponentmode)
-                                printerror(BAD_NUMBER);
-                        haddecimal = 1;
-                        multiplier = 0.1;
-                        continue;
-                }
-
-                if ('0' <= *work && *work <= '9')
-                {
-                        if(!exponentmode)
-                        {
-                                if(haddecimal)
-                                {
-                                        thenumber += multiplier * ctoi(*work);
-                                        multiplier /= 10;
-                                }
-                                else
-                                        thenumber = thenumber*10 + ctoi(*work);
-                        }
-                        else
-                        {
-				if(*work == '-')
-					exponent -= exponent;
-				else
+	if (*work == '@')
+		{
+		envplace = getenv("NJEVAL");
+		if (envplace == NULL)
+			printerror(NO_MEMORY);
+		thenumber = atof(envplace);
+		}
+	else
+		{
+		for( ; (strchr("0123456789.DE", *work) != NULL) &&
+            		*work ; work++)
+			{
+			if (*work == '.')
 				{
-	                                exponent = exponent*10 + ctoi(*work);
-        	                        if(exponent > 327 || exponent < -327)
-                	                        printerror(BIG_EXP);
+				if (haddecimal || exponentmode)
+					printerror(BAD_NUMBER);
+				haddecimal = 1;
+				multiplier = 0.1;
+				continue;
+        		}
+
+			if ('0' <= *work && *work <= '9')
+				{
+				if(!exponentmode)
+					{
+					if(haddecimal)
+						{
+						thenumber += multiplier * ctoi(*work);
+						multiplier /= 10;
+						}
+					else
+						thenumber = thenumber*10 + ctoi(*work);
+					}
+				else
+					{
+					if(*work == '-')
+						exponent -= exponent;
+					else
+						{
+						exponent = exponent*10 + ctoi(*work);
+						if(exponent > 327 || exponent < -327)
+							printerror(BIG_EXP);
+						}
+           		}
+        		continue;
 				}
-                        }
-                        continue;
-                }
 
-                if (*work == 'D' || *work == 'E')
-                {
-			if (work[1] == '-')
-			{
-				exponentmode = -1;
-				work++;
-			}
-			else
-			{
-				if (work[1] == '+')
+			if (*work == 'D' || *work == 'E')
+        		{
+				if (work[1] == '-')
+					{
+					exponentmode = -1;
 					work++;
-				exponentmode = 1;
-			}
-                        continue;
-                }
+					}
+				else
+					{
+					if (work[1] == '+')
+						work++;
+					exponentmode = 1;
+					}
+        		continue;
+        		}
 
-        }
-        work--;
+		}
+	work--;
+	}
 
-        newnumber = newtoken();
+	newnumber = newtoken();
 
-        newnumber->kind = NUMBER;
-        newnumber->value = thenumber * pow(10,exponent*exponentmode);
+	newnumber->kind = NUMBER;
+	newnumber->value = thenumber * pow(10,exponent*exponentmode);
 
-        if(tail != NULL)
-                tail->next = newnumber;
-        else
-                head = newnumber;
-        newnumber->previous = tail;
-        tail = newnumber;
-        return;
+	if(tail != NULL)
+		tail->next = newnumber;
+	else
+		head = newnumber;
+	newnumber->previous = tail;
+	tail = newnumber;
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /*      insert a binary operator into the list                            */
 
 void getbinop()
 {
-        register struct token *newbinop;
+	register struct token *newbinop;
 
-        newbinop = newtoken();
+	newbinop = newtoken();
 
-        newbinop->kind = BIN_OP;
-        newbinop->oper = *work;
+	newbinop->kind = BIN_OP;
+	if (*work == '*' && work[1] == '*')
+		{
+		newbinop->oper = '^';
+		work++;
+		}
+	else
+		newbinop->oper = *work;
 
-        if(tail != NULL)
-                tail->next = newbinop;
-        else
-                head = newbinop;
-        newbinop->previous = tail;
-        tail = newbinop;
+	if(tail != NULL)
+		tail->next = newbinop;
+	else
+		head = newbinop;
+	newbinop->previous = tail;
+	tail = newbinop;
 
-        return;
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /*      insert a unary operator into the list                             */
 
 void getuniop()
 {
-        register struct token *newuniop;
+	register struct token *newuniop;
 
-        newuniop = newtoken();
+	newuniop = newtoken();
 
-        newuniop->kind = UNI_OP;
-        newuniop->oper = *work;
+	newuniop->kind = UNI_OP;
+	newuniop->oper = *work;
 
-        if(tail != NULL)
-                tail->next = newuniop;
-        else
-                head = newuniop;
-        newuniop->previous = tail;
-        tail = newuniop;
+	if(tail != NULL)
+		tail->next = newuniop;
+	else
+		head = newuniop;
 
-        return;
+	newuniop->previous = tail;
+	tail = newuniop;
+
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /*      put a left parenthesis into the list                              */
 
 void getlp()
 {
-        register struct token *newleft;
+	register struct token *newleft;
 
-        newleft = newtoken();
+	newleft = newtoken();
 
-        newleft->kind = LT_PAREN;
+	newleft->kind = LT_PAREN;
 
-        if (tail != NULL)
-                tail->next = newleft;
-        else
-                head = newleft;
-        newleft->previous = tail;
-        tail = newleft;
+	if (tail != NULL)
+		tail->next = newleft;
+	else
+		head = newleft;
+
+	newleft->previous = tail;
+	tail = newleft;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /*      put a right parenthesis into the list                             */
 
 void getrp()
 {
-        register struct token *newright;
+	register struct token *newright;
 
-        newright = newtoken();
+	newright = newtoken();
 
-        newright->kind = RT_PAREN;
+	newright->kind = RT_PAREN;
 
-        if (tail != NULL)
-                tail->next = newright;
-        else
-                head = newright;
-        newright->previous = tail;
-        tail = newright;
-        return;
+	if (tail != NULL)
+		tail->next = newright;
+	else
+		head = newright;
+
+	newright->previous = tail;
+	tail = newright;
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /*      place a function into the list                                    */
 
 void getfunc()
 {
-        struct token *newfunc;
-        char myname[80];
-        int mynamelen = 0;
-        char *resting;
+	struct token *newfunc;
+	char myname[80];
+	int mynamelen = 0;
+	char *resting;
 
-        while(1)
-        {
-                if(*work == '(')
-                        break;
-                if(*work > 'Z' || *work < 'A')
-                        printerror(FBAD_CHAR);
-                myname[mynamelen++] = *work;
-                if(mynamelen > 70)
-                        printerror(FTOO_LONG);
-                work++;
-        }
-        myname[mynamelen++] = '\0';
+	while(1)
+		{
+		if(*work == '(')
+			break;
+		if(*work > 'Z' || *work < 'A')
+			printerror(FBAD_CHAR);
+		myname[mynamelen++] = *work;
+		if(mynamelen > 70)
+			printerror(FTOO_LONG);
+		work++;
+		}
+	myname[mynamelen++] = '\0';
 
-        newfunc = newtoken();
-        newfunc->kind = FUNCTION;
-        if (tail != NULL)
-                tail->next = newfunc;
-        else
-                head = newfunc;
-        newfunc->previous = tail;
-        tail = newfunc;
+	newfunc = newtoken();
+	newfunc->kind = FUNCTION;
+	if (tail != NULL)
+		tail->next = newfunc;
+	else
+		head = newfunc;
+	newfunc->previous = tail;
+	tail = newfunc;
 
-        resting = (char *) malloc(mynamelen+2);
-        if (resting == NULL)
-                printerror(FNO_MEMORY);
+	resting = (char *) malloc(mynamelen+2);
+	if (resting == NULL)
+		printerror(FNO_MEMORY);
 
-        strcpy(resting, myname);
-        newfunc->fname = resting;
-        lparen++;
-        return;
+	strcpy(resting, myname);
+	newfunc->fname = resting;
+	lparen++;
+	return;
 }
+
 
 /* ---------------------------------------------------------------------- */
 /*      this function returns the integral precedence value of the
         operator in the token record pointed to by place.  note that
         binary operators have lower precedences than unary operators.
         lower precedence has a return value closer to zero.             */
+
 int precedenceof(place)
 struct token *place;
 {
-        if(place->kind == UNI_OP)
-                return(strchr(vuniops, place->oper) - vuniops + 100);
-        else
-                return(strchr(vbinops, place->oper) - vbinops + 1);
+	if(place->kind == UNI_OP)
+		return(strchr(vuniops, place->oper) - vuniops + 100);
+	else
+		return(strchr(vbinops, place->oper) - vbinops + 1);
 }
+
 
 /* ---------------------------------------------------------------------- */
 
@@ -793,234 +886,237 @@ void main(argc, argv)
 int argc;
 char *argv[];
 {
-        int n;
+	int n;
 
-        setprogname(argv[0]);
+	setprogname(argv[0]);
 
-        puts("Nifty James' Famous Evaluator");
-        puts("Version 1.01 of 1 March 1988");
-        puts("(C) Copyright 1988 by Mike Blaszczak\n");
+	fputs("Nifty James' Famous Evaluator\n", stderr);
+	fputs("Version 1.20 of 10 July 1989\n", stderr);
+	fputs("(C) Copyright 1988, 1989 by Mike Blaszczak\n\n", stderr);
 
-/* get the command line all into line[] */
+	/* get the command line all into line[] */
 
-#ifdef MSDOS
-        line[0] = '\0';
-        work = line;
-        for(n = 1; n<argc; n++)
-                strcat(line, argv[n]);
-#endif
+	line[0] = '\0';
+	work = line;
+	for(n = 1; n<argc; n++)
+		strcat(line, argv[n]);
 
-#ifdef VAX
-	gets(line);
-#endif
-        strupr(line);
+	strupr(line);
 
-        if(strlen(line) == 0)
-        {
-                puts("\nUsage:\n");
-                puts("\tnjeval <expression>\n");
-                puts("\t<expression> may include numbers, both inplicit and scientific");
-                puts("\t\tas well as the operators +, -, /, %, *, and ^, and may use");
-                puts("\t\tthe following functions:\n");
-                for(n=0; functions_list[n].execute != NULL; n++)
-                        printf("\t\t%s()\t%s\n", functions_list[n].name, functions_list[n].describe);
-                putchar('\n');
-                printerror(0, 1);
-        }
+	if(strlen(line) == 0)
+		{
+		puts("\nUsage:");
+		puts("\tnjeval <expression>\n");
+		puts("\t<expression> may include numbers, both inplicit and scientific");
+		puts("\t\tas well as the operators +, -, /, %, *, **, and ^, and may");
+		puts("\t\tuse any of the following functions:\n");
+		for(n=0; functions_list[n].execute != NULL; n++)
+			{
+			printf("%5s() %-25s     ", functions_list[n].name, functions_list[n].describe);
+			n++;
+			if (functions_list[n].execute != NULL)
+				printf("%5s() %-25s\n", functions_list[n].name, functions_list[n].describe);
+			}
 
-        binvalid = 0;           /* initialize parser state      */
-        univalid = 1;
-        rparen = 0;
-        lparen = 0;
+		putchar('\n');
+		printerror(0, 1);
+		}
 
-        head = NULL;
-        tail = NULL;
+	binvalid = 0;           /* initialize parser state      */
+	univalid = 1;
+	rparen = 0;
+	lparen = 0;
+	
+	head = NULL;
+	tail = NULL;
 
 /* start it with a left parenthesis     */
 
-        getlp();
+	getlp();
 
 /* zip through the list, handling all the characters and placing tokens
-        into the list, if need be.              */
+	into the list, if need be.              */
 
-        for( ; *work ; work++)
-        {
+	for( ; *work ; work++)
+		{
 /* whitespace */
 
-                if(*work == ' ' || *work == '\t')
-                        continue;
+		if(*work == ' ' || *work == '\t')
+			continue;
 
 /* number */
 
-                if(strchr(vnum, *work) != NULL)
-                {
-                        getnumber();
-                        univalid = 0;
-                        binvalid = 1;
-                        continue;
-                }
+		if(strchr(vnum, *work) != NULL)
+			{
+			getnumber();
+			univalid = 0;
+			binvalid = 1;
+			continue;
+			}
 
 /* unary operator */
 
-                if(strchr(vuniops, *work) != NULL)
-                {
-                        if(!univalid)
-                        {
-                                if(strchr(vbinops, *work) == NULL)
-                                        printerror(BAD_UNI);
-                        }
-                        else    /* fall through to binop if it is that
-                                        context         */
-                        {
-                                getuniop();
-                                univalid = 1;
-                                binvalid = 0;
-                                continue;
-                        }
-                }
+		if(strchr(vuniops, *work) != NULL)
+			{
+			if(!univalid)
+				{
+				if(strchr(vbinops, *work) == NULL)
+				printerror(BAD_UNI);
+				}
+			else    /* fall through to binop if it is that context */
+				{
+				getuniop();
+				univalid = 1;
+				binvalid = 0;
+				continue;
+				}
+            }
 
 /* binary operator              */
 
-                if(strchr(vbinops, *work) != NULL)
-                {
-                        getbinop();
-                        univalid = 1;
-                        binvalid = 0;
-                        continue;
-                }
+		if(strchr(vbinops, *work) != NULL)
+			{
+			getbinop();
+			univalid = 1;
+			binvalid = 0;
+			continue;
+			}
 
 /* left parenthesis             */
 
-                if(*work == '(')
-                {
-                        getlp();
-                        univalid = 1;
-                        binvalid = 0;
-                        lparen++;
-                        continue;
-                }
+		if(*work == '(')
+			{
+			getlp();
+			univalid = 1;
+			binvalid = 0;
+			lparen++;
+			continue;
+			}
 
 /*  right parenthesis           */
 
-                if(*work == ')')
-                {
-                        getrp();
-                        univalid = 0;
-                        binvalid = 1;
-                        rparen++;
-                        continue;
-                }
+		if(*work == ')')
+			{
+			getrp();
+			univalid = 0;
+			binvalid = 1;
+			rparen++;
+			continue;
+			}
 
 /*   function name              */
-/*   NOTE THAT FUNCTION NAMES MUST END IN (,
-        and that getfunc() will add a '(' to
-        the token list                          */
+/*   NOTE THAT FUNCTION NAMES MUST END IN (, and that getfunc()
+		will add a '(' to the token list                          */
 
-                if('A' <= *work && *work <= 'Z')
-                {
-                        getfunc();
-                        univalid = 1;
-                        binvalid = 0;
-                        continue;
-                }
+		if('A' <= *work && *work <= 'Z')
+			{
+			getfunc();
+			univalid = 1;
+			binvalid = 0;
+			continue;
+			}
 
-                printerror(BAD_CHAR);
-        }
+		printerror(BAD_CHAR);
+		}
+	
+		getrp();                /* surround expression with parenthesis */
 
-        getrp();                /* surround expression with parenthesis */
+		/* check to see that there is a valid number of parenthesis     */
 
-        /* check to see that there is a valid number of parenthesis     */
+		if(lparen > rparen)
+			printerrorat(BAD_LPAREN, strchr(line, '(')-line+1);
+		if(lparen < rparen)
+			printerrorat(BAD_RPAREN, strrchr(line, ')')-line+1);
 
-        if(lparen > rparen)
-                printerrorat(BAD_LPAREN, strchr(line, '(')-line+1);
-        if(lparen < rparen)
-                printerrorat(BAD_RPAREN, strrchr(line, ')')-line+1);
+		dumptree();
 
-        dumptree();
+		if (head->next != tail->previous)
+			{
+			/* if there's something to evaluate, do it!             */
+			/* (but first wipe out unneeded parenthesis             */
 
-        if (head->next != tail->previous)
-        {
-                /* if there's something to evaluate, do it!             */
-                /* (but first wipe out unneeded parenthesis             */
+			walker = head->next;
 
-        walker = head->next;
+			while(walker != tail)
+				{
+				if(walker->kind == NUMBER && walker->previous->kind == LT_PAREN
+							&& walker->next->kind == RT_PAREN)
+					killbrackets(walker);
+				walker = walker->next;
+				}
 
-        while(walker != tail)
-        {
-                if(walker->kind == NUMBER && walker->previous->kind == LT_PAREN
-                        && walker->next->kind == RT_PAREN)
-                        killbrackets(walker);
-                walker = walker->next;
-        }
+			while(head != tail)
+				{
+				walker = leftmost = head;
+				if(leftmost->next->kind == RT_PAREN)
+					printerrorat(NOTHING_2DO, leftmost->column);
+				while(walker->kind != RT_PAREN)
+					{
+					if (walker->kind == LT_PAREN || walker->kind == FUNCTION)
+						{
+						leftmost = walker;
+						if(leftmost->next->kind == RT_PAREN)
+							printerrorat(NOTHING_2DO, leftmost->column);
+						}
+						walker = walker->next;
+					}
 
-        while(head != tail)
-        {
-                walker = leftmost = head;
-                if(leftmost->next->kind == RT_PAREN)
-                        printerrorat(NOTHING_2DO, leftmost->column);
-                while(walker->kind != RT_PAREN)
-                {
-                        if (walker->kind == LT_PAREN || walker->kind == FUNCTION)
-                        {
-                                leftmost = walker;
-                                if(leftmost->next->kind == RT_PAREN)
-                                        printerrorat(NOTHING_2DO, leftmost->column);
-                        }
-                        walker = walker->next;
-                }
+				rightmost = walker;
+				topprecedence = 0;
+				gothrough = leftmost->next;
+				walker = leftmost;
 
-                rightmost = walker;
-                topprecedence = 0;
-                gothrough = leftmost->next;
-                walker = leftmost;
+				if(leftmost->kind == FUNCTION && leftmost->next == rightmost->previous)
+					{
+					evaluate(leftmost);
+					killbrackets(leftmost->next);
+					}
+				else
+					{
+					while(walker != rightmost)
+						{
+						if((walker->kind == BIN_OP || walker->kind == UNI_OP)
+								&& (topprecedence < precedenceof(walker)))
+							{
+							gothrough = walker;
+							topprecedence = precedenceof(walker);
+							}
+						walker = walker->next;
+						}
+					evaluate(gothrough);
 
-                if(leftmost->kind == FUNCTION && leftmost->next == rightmost->previous)
-                {
-                        evaluate(leftmost);
-                        killbrackets(leftmost->next);
-                }
-                else
-                {
-                        while(walker != rightmost)
-                        {
-                                if((walker->kind == BIN_OP || walker->kind == UNI_OP)
-                                        && (topprecedence < precedenceof(walker)))
-                                {
-                                        gothrough = walker;
-                                        topprecedence = precedenceof(walker);
-                                }
-                                walker = walker->next;
-                        }
-                        evaluate(gothrough);
+				/* if we have just (constant), then delete the parenthesis      */
+					if(leftmost->next == rightmost->previous)
+						{
 
-        /* if we have just (constant), then delete the parenthesis      */
-                        if(leftmost->next == rightmost->previous)
-                        {
-
-        /* if they're our original (), then we're done!                 */
-                                if(leftmost == head && rightmost == tail)
-                                        break;
-                                if (leftmost->kind != FUNCTION)
+				/* if they're our original (), then we're done!                 */
+						if(leftmost == head && rightmost == tail)
+							break;
+						if (leftmost->kind != FUNCTION)
         /* otherwise, wipe them out                                     */
-                                killbrackets(leftmost->next);
-                }
-                }
+							killbrackets(leftmost->next);
+						}
+					}
 
 #ifdef DEBUG
-                printf("Head = %p\nTail = %p\nRightmost = %p\nLeftmost = %p\n",
-                        (void far *) head, (void far *) tail,
-                        (void far *) rightmost, (void far *) leftmost);
+				printf("Head = %p\nTail = %p\nRightmost = %p\nLeftmost = %p\n",
+						(void far *) head, (void far *) tail,
+						(void far *) rightmost, (void far *) leftmost);
 #endif
-        }
-        }
-        else
-                result = head->next->value;
+				}
+			}
+			else
+				result = head->next->value;
 
-        printf("%s = %.20g\n", line, result);
+	printf("%s = %.20g\n", line, result);
+	sprintf(strresult, "%.20g", result);
+
+	nsetenv("NJEVAL", strresult);
 
 #ifdef MSDOS
-        exit(0);
+	exit(0);
 #else
 	return;
 #endif
 }
+

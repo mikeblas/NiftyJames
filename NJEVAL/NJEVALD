@@ -3,12 +3,16 @@
 #
 # (C) Copyright 1988 by Mike Blaszczak
 
+int2e.obj:	int2e.asm
+	masm /w2 /Zi /Ml int2e.asm;
+
 njeval.obj:	njeval.c
-	njpl -t cl "/Zi /Od /DDEBUG /DLINT_ARGS /c njeval.c"
+	cl /Zi /Od /DDEBUG /c njeval.c
 
 njevalfn.obj:	njevalfn.c
-	njpl -t cl "/Zi /Od /DDEBUG /DLINT_ARGS /c njevalfn.c"
+	cl /Zi /Od /DDEBUG /c njevalfn.c
 
-njeval.exe:	njeval.obj njevalfn.obj
-	njpl -t link "njeval+njevalfn,njeval.exe,njeval.map /map /noi /codeview,\lib\snjlib;"
+njeval.exe:	njeval.obj njevalfn.obj int2e.obj
+	link njeval+njevalfn+int2e,njeval.exe,njeval.map /map /noi /codeview;
 
+
