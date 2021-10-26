@@ -1,0 +1,365 @@
+
+
+                                                  _______
+                                             ____|__     |               (tm)
+Nifty James' File Find Utility            --|       |    |-------------------
+Version 2.10 of 25 August 1991              |   ____|__  |  Association of
+(C) Copyright 1989, 1990 by Mike Blaszczak  |  |       |_|  Shareware
+All Rights Reserved                         |__|   o   |    Professionals
+                                          -----|   |   |---------------------
+                                               |___|___|    MEMBER
+                                      
+     PURPOSE                         
+     -------
+     
+     NJFIND is a file-finder utility.  Users with large (or crowded) hard
+     disk drives will welcome NJFIND as a tool to find filenames based on
+     a wildcard specification.  NJFIND works across all directories of a
+|    logical drive, and will even open DWC, ZIP, LZH, ZOO, PAK, ARJ,
+|    and ARC files to check them for matching filenames.  NJFIND can also
+|    scan across different disk drives, if you so desire.
+     
+     
+     
+     FEATURES
+     --------
+     
+     NJFIND works with standard DOS file names.  The program will also
+     "open" several types of archive files.  These include the popular ZIP
+     and ARC formats, as well as the public domain ZOO and LZH formats.
+     NJFIND also can read PAK files.
+     
+     NJFIND runs quickly.  I have over two-hundred files stored with LHARC
+     on my hard drive, and I have over fifteen-hundred files on my hard
+     drive.  NJFIND will scan the entire drive in less than thirty
+     seconds.
+     
+     NJFIND requires less than twenty kilobytes of disk space.  Because
+     it uses standard DOS file input and output. Because it uses no
+     special trickery, the program should be compatible with protected
+     environments such as DesqView and Microsoft Windows.
+     
+     NJFIND has been tested successfully on an IBM Token Ring network using
+     Novell SFT Netware.
+
+|    NJFIND allows the user to keep a set of their favorite options in the
+|    system environment so that commonly-used options need not be retyped
+|    each time the program is invoked.
+
+     
+     
+     
+     USAGE
+     -----
+     
+     You may use NJFIND to scan all of your hard drive and all archive
+     files by using the command followed by a filename.  For example:
+     
+        NJFIND GOOFY.TXT
+     
+     searches the current drive for the file GOOFY.TXT.  Should you wish,
+     you can have NJFIND run a drive other than the default drive.  To do
+     this, simply include a drive specification.  To look for GOOFY.TXT on
+     drive H, one would use the command
+     
+        NJFIND H:GOOFY.TXT
+     
+     If you are looking for a file with a name you can't specifically
+     remember, you may use wildcards in the filename given to NJFIND to
+     search the drives and files on your system.  If you knew that your
+     text file began with a G, for example, you might use
+     
+        NJFIND H:G*.TXT
+     
+     If you knew that you had called the file MODEL but couldn't remember
+     the extension it had,
+     
+        NJFIND MODEL.*
+     
+     would do the job.
+
+     Note that NJFIND searches *all* archive files it notices, even
+     if they don't match the wildcard specification that you supply.
+     
+     If you have many of the supported archive files on your diskette, you
+     may be noticing that NJFIND runs a little slower.  If you are looking
+     only for "normal" DOS files, you can use the /N option to cause
+     NJFIND to search only DOS directories.  That would make the above
+     command look like this:
+     
+        NJFIND /N MODEL.*
+     
+     Since you might know that the file is not stored in an archive, you
+     can expidite the search by using /N.  Normally, NJFIND searches ZIP,
+     ARC, ZOO, PAK, and LZH files when it finds them.  You can switch off
+     these file choices individually, as well.  For example, to search for
+     NJFIND.C without looking in LZH or ZOO files, you may use
+     
+        NJFIND /O /L NJFIND.C
+     
+     The options and their related archive files are shown here:
+     
+        /A              Don't search throghh ARC files
+        /L              Don't search through LZH files
+        /O              Don't search through ZOO files
+        /P              Don't search through PAK files
+        /Z              Don't search through ZIP files
+	/W		Don't search through DWC files
+|	/J		Don't search through ARJ files
+     
+|    You might notice that /N is simply a more convenient form for
+|    using /A /L /O /P /Z /W /J all out.
+     
+     If you'd like, you can have NJFIND print out messages as it traverses
+     your hard drive and checks files.  To do this, use the /D option to
+     display the filenames NJFIND searches through, as well as the ones it
+     finds.
+     
+     NJFIND is capable of displaying file directory information, as well. 
+     If you would like to see the last modification date and time as well
+     as the attributes and size of found files, use the /V option.  /V
+     stands for "verbose mode".
+     
+     It is often handy to have just a total of file information.  For
+     example, you might want to see how many .GIF files are on your hard
+     disk, and how much room they're taking up.  You can use the /T option
+     to have NJFIND print out only the totals information, instead of also
+     displaying the name and location of all the found files.
+     
+     Our example with .GIF files might look like this:
+     
+        NJFIND /T *.GIF
+
+     When NJFIND prints out the number of files found, the number
+     indicates the number of files that were not in archives.  If any
+     files were "inside" of archives, NJFIND will note that number of
+     files with "archived files".
+
+     If you ran NJFIND and it printed, for example,
+
+        6 files found.
+        18 archive files found.
+
+     it would mean that NJFIND came across 24 files that matched your
+     specification.  Six of these files were regular DOS files, but
+     eighteen of the files were actually inside archive files.
+
+     NJFIND will search through archive files if it finds them and
+     recognizes them by their extension.  Notice that, if you have an
+     archive file and it doesn't have the normal file extension, the
+     file won't be checked by NJFIND.
+     
+     If you find yourself confused about NJFIND's options, you can run
+     NJFIND without any options and it will show you a display of the
+     usage information.  NJFIND will also do this if you try to use an
+     option it doesn't recognize.
+
+     If you're running NJFIND and realize something's wrong (or you
+     have a huge disk and ge tired of waiting), you can use <CTRL+C> or
+     <CTRL+BREAK> to stop the program.  NJFIND will tell you what
+     it's found so far, and then leave you at the DOS prompt.
+
+     Edward Mendelson wrote to me on CompuServe and suggested that I
+     provide an option to allow the program to search through all the
+     drives attached to a system.  This was a pretty good idea and
+     I have implemented it in Release 1.10.  If you use the /R
+     option, NJFIND will go through all of the drives looking for
+     your file.  If the filespec you provide contains a drive
+     specification, it will be ignored.  NJFIND searches your drives
+     in alphabetical order, starting with your first hard disk drive
+     or RAM disk, such as NJRAMD.  NJFIND does not search floppy
+     drives in this mode.
+ 
+     Both Edward and Heward Hane noticed that NJFIND occasionally
+     printed out that a archive file was found in the target file;
+     that is, the file found message was ocassionally reversed.  This
+     problem has been fixed in Release 1.10.
+ 
+     Edward Mendelson noticed a problem matching spurious filenames
+     in this release.  The rub was that NJFIND would match files
+     shorter than the wildcarded filespec, but only when the wildcard
+     didn't extend into the actual filename.  (Whew!)  Again, hats
+     off to Edward, who seemingly doesn't sleep when our world has
+     buggy software!
+
+|    David Nanian sent me a note on BIX mentioning that NJFIND, when
+|    compiled with a different compiler than I used, generated code that
+|    caused a system crash.  As it turned out, some mutant memory
+|    allocation was going on in some of the code, and this got tidied up.
+      
+      
+     LEGAL JUNK
+     ----------
+     
+     ARC is a file format and a file compression program developed and
+     sold by System Enhancement Associates.  ZIP is a file format and file
+     compression program developed and provided by Phil Katz of PKWare. 
+     LZH is a public-domain file format manipulated by the program LHARC,
+     among others.  ZOO is another public-domain file format for the
+     compression and archival of data.
+     
+     NJFIND probably would not have been possible without the BRIEF
+     programming editor from Underware.  If you program in any language
+     under MS-DOS or OS/2, give BRIEF a look!  BRIEF is marketed by
+     Solution Systems, but written by Underware.
+     
+     
+     
+     SOURCE CODE
+     -----------
+     
+     The archive or disk which brought you NJFIND should also include the
+     sourcecode and make files for the program.  If you're not a
+     programmer, you probably won't be much interested in what makes
+     NJFIND go.  However, if you are a coder, you may enjoy perusing the
+     file NJFIND.C.
+     
+     NJFIND was written completely in Microsoft C Version 5.10.  You can
+     use the MAKE utility supplied in the Microsoft C package to build the
+     program.  NJFIND. makes the standard program and NJFINDD. makes the
+     debugging version.  This debugging version spews out extra information
+     about the progress that NJFIND is making, as well as some information
+     about the internals that NJFIND uses to compare files and traverse
+     the directory structure.
+     
+     I am certain that NJFIND will not compile in the QuickC interactive
+     environment, but it may compile with the QCL command-line compiler.
+     I know nothing of NJFIND's compatibility with Borland's Turbo C
+     product, but I also know for certain that NJFIND will not compile
+     as-is on the Lattice C Compiler, Version 6.01.   At least a few of
+     the runtime library call names must be changed.
+
+     
+     COMPATIBILITY
+     -------------
+     
+     NJFIND has been tested with these products:
+     
+|       Phil Katz/PKWare                PKZIP   Version 1.10
+        Haruyasu Yoshizaki              LHARC   Version 1.13B
+        Phil Katz/PKWare                PKARC   Version 3.5
+        System Enhancement Associates   ARC     Version 6.00
+        NoGate Consulting               PAK     Version 2.10
+        Rahul Dhesi                     ZOO     Version 2.01
+|	Dwight W. Campbell              DWC     Version 5.01
+	Robert K Jung			ARJ	Version 2.00
+        
+     If you're using an older version of an archiver product, please
+     contact the author of that product about getting an upgrade.  I can
+     not obtain older versions, and thus can't guarantee (and frankly
+     don't see a need for) backward compatibility.
+     
+     If you have a newer version of one of these packages and notice that
+     NJFIND doesn't seem to be working correctly, please do send me a
+     note.  I will be very interested in fixing NJFIND promptly to handle
+     newer file compression programs.
+     
+     
+     
+     REFERENCES
+     ----------
+     
+     I used Phil Katz's APPNOTE file, which is distributed with the
+     PKZ101.EXE self-extracting Shareware version of his software.  This
+     file had great descriptions of the data structures used in ZIP files.
+     
+     For ARC, I hacked around in the file and discovered the relatively
+     simple file structure for myself.  Since NJFIND doesn't need much
+     information from the file, this was relatively easy.
+     
+     The LHARC files were dissected by examining the sourcecode for the
+     package, as found in the LHARCSRC.LZH file in a few places.  As with
+     the Phil Katz program, the availability of sourcecode and
+     documentation made developing the pertinent sections of NJFIND a
+     snap.
+     
+     Information for the PAK file format came from the "Technical Notes"
+     section of PAK.DOC, which I found as part of PAK210.EXE on a local
+     bulletin-board system.
+     
+     The ZOO file format was another one that I had to hack apart myself,
+     since Rahul Dhesi didn't see fit to put a description of the file
+     format in his Shareware distribution package.  (This seems odd to me.
+     He set things up with .MAN files and made documentation that
+     resembles traditional Unix man files, but he didn't include file
+     format manual pages ... most Unix systems (or at least SunOS) does
+     this.  Oh, well.)  Of the five, this was the format that was a bear to
+     figure out, but I eventually got it down.
+
+|    Dwight Campbell was kind enough to send me a diskette with sourcecode
+|    to a "verbose lister" for his DWC format.  This let me write the
+|    supporting code for DWC archives in a very straightforward manner. 
+|    The code to process DWC files is basically lifted straight from his
+|    example.
+
+     
+     
+     AVAILABILTY
+     -----------
+     
+     Should you be interested in any enhancements, changes, or a
+     customized version of NJFIND, please do not hesitate to drop me a
+     line.  I am occasionally avaialable for customized programming
+     projects on a by-contract basis.  Should you have the need for solid
+     software in the IBM-PC or Unix enviroments, please do feel free to
+     contact me.
+     
+     
+     
+     
+     REGISTRATION
+     ------------
+
+     This program is produced by a member of the Association of
+     Shareware Professionals (ASP).  ASP wants to make sure that the
+     shareware principle works for you. If you are unable to resolve
+     a shareware-related problem with an ASP member by contacting the
+     member directly, ASP may be able to help. The ASP Ombudsman can
+     help you resolve a dispute or problem with an ASP member, but
+     does not provide technical support for members' products. Please
+     write to the ASP Ombudsman at P.O. Box 5786, Bellevue, WA 98006
+     or send a CompuServe message via EasyPlex to ASP Ombudsman
+     70007,3536.
+     
+     NJFIND is a work of Shareware.  If you use the program, please
+     register your copy.  This will expidite your receipt of future
+     versions and also net you a nice letter in return.
+     
+     While you may have purchased NJFIND through the mail, paying the
+     distribution house for the diskette DOES NOT register the program! 
+     The same is true with copies attained from online systems and user
+     group libraries.
+     
+     If you are interested in redistributing or republishing NJFIND,
+     please contact me at my address below.  You will find that getting
+     permission to do so is remarkably easy, if your intent is kosher.
+     
+     To register your copy, please send a registration fee of $10 to my
+     address below.  You will be added to my mailing list for this
+     program, receive a list of my other releases, and be eligible to
+     upgrade NJFIND for one dollar, should a new version become available.
+     
+     Thank you for your interest!
+     
+     
+     Mike Blaszczak
+     112 Verlinden Drive
+     Monroeville, Pennsylvania
+        15146-2041
+
+     
+     You can also reach me at any of these electronic hangouts:
+
+     BIX                      : blaszczak
+     EasyPlex on CompuServe   : 76360,157
+     GEnie Mail               : M.BLASZCZAK
+     PARTICIPATE on Unison    : NIFTY JAMES
+
+     If I'm not online, I'm either travelling on my motorcycle
+     through the beautiful New England countryside or attending a
+     performance of live music somewhere.  (Please note that my
+     access to PARTICIPATE on CompuServe has been removed
+     indefinitely, as it appears that CompuServe refuses to support
+     The PARTICIPATE Conferencing system as a product.)
+
+

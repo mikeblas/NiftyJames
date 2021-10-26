@@ -16,6 +16,9 @@ This TSR program watches the clock and plays chimes on the quarter-hour, just li
 
 I was fascinated with the OBJ file format that the Microsoft tools generated -- the output from the compiler and assembler. After getting documentation about the file format from Microsoft, I wrote this dumper to learn more about the file format. My intention was to write a linker eventually, but I never got that far.
 
+## NJFIND - File Finder ##
+
+NJFIND is a command-line tool to find files. It recursively searches for matching file names, and can also search inside various archive types. It would've been good to add caching or indexing, but it's still pretty cool.
 
 ## NJFRERAM - Free Memory Display ##
 

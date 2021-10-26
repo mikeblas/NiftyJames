@@ -1,0 +1,27 @@
+23 June, 1991 
+
+Nifty James' Famous RAM Disk 
+Version 1.40ASP Release Notes
+
+Recently, Terje Mathisen made the necessary tweaks for NJRAMD to have
+it run in extended memory.  This means that NJRAMD can now use the
+memory given to your system by XMS drivers such as HIMEM.SYS and
+QEMM.SYS, making NJRAMD compatible with Windows.
+
+This version has been a long time coming.  As many of you know, I had
+intended to write it myself for some time.  This version of NJRAMD
+does not contain a changed EMS version, but gets a new version to
+show that it is now XMS compatible.
+
+As usual, if you have any questions about NJRAMD, please feel free to
+write to me.
+
+
+Mike Blaszczak
+112 Verlinden Drive
+Monroeville, Pennsylvania
+	15146-2041
+
+bix: blaszczak
+cis: 76360,157
+

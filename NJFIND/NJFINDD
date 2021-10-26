@@ -1,0 +1,16 @@
+#
+# Nifty James' Famous File Find Utility
+#
+# Version 1.00 of 30 September 1989
+# (C) Copyright 1989 by Mike Blaszczak
+# All Rights Reserved.
+#
+# MAKEFILE for Debugging Version
+#
+
+njfind.obj:	njfind.c
+	cl /W3 /Zi /c njfind.c
+
+njfind.exe:	njfind.obj
+	link njfind /noi /noe /codeview /stack:4800 /map;
+

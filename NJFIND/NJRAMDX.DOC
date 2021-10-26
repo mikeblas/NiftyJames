@@ -1,0 +1,44 @@
+
+
+Documentation for NJRAMDX.SYS:
+
+NJRAMDX.SYS is based on NJRAMD.SYS, (C) 1987 By Mike Blaszczak.
+
+NJRAMD.SYS is ShareWare, a $15 donation is requested.
+
+For a complete specification, look at NJRAMD.DOC.
+
+
+
+Version 1.02:  Modified to be compatible with QEMM386.SYS V5.11.
+ 90-10-01      QEMM does not follow the XMS spec completely, in that it
+               will return values other than 0 in BL to show success.
+               This version is modified to ignore any return code in BL
+               when asking for the amount of XMS RAM available.
+
+NJRAMDX.SYS is an XMS RAM disk, compatible with HIMEM.SYS from Windows 3.0. 
+It is 25-40% faster than RAMDRIVE.SYS, and uses less than 600 bytes of
+conventional (lower 640K) RAM.
+
+The syntax is:
+
+DEVICE=[path]NJRAMDX.SYS [ [size] | [/A] ] [/S]
+
+where
+
+size  : size of disk in KB, default = 512.
+
+/A    : Use All free XMS memory.
+
+/S    : Silent. By default, NJRAMDX.SYS will click the speaker on all
+        i/o to/from the RAM disk. This gives an audible indication that
+        the disk is beeing accessed. 
+
+        With the sound disabled, the resident portion of the driver will
+        be slightly smaller.
+
+
+                          Oslo, Norway 90-09-20
+
+                            Terje W. Mathisen
+

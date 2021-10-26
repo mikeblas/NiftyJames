@@ -1,0 +1,79 @@
+
+
+Nifty James' File Find Utility
+(C) Copyright 1989, 1990 by Mike Blaszczak
+All Rights Reserved
+
+
+
+Version 1.00 of 20 November 1989        - Original Release
+
+        This original release was sent to BIX, CompuServe, and The
+        Hounds' Haven Bulletin Board System in Hartford, Connecticut.
+
+
+Version 1.10 of 16 December 1989        - First enhancement release
+
+        This first enhancement release of NJFIND the program the
+        /R option, which lets the program search through all drives
+        on your system.
+
+        NJFIND occasionally printed out that an archive file was
+        found inside the target file; that is, the file found
+        message was sometimes displayed backwards.  This has been
+        fixed.
+
+  
+Version 1.11 of 5 January 1990          - Maintenance Release
+
+        This internal revision was distributed only to friends.
+
+
+Version 1.12 of 13 February 1990        - Maintenance Release
+
+        This maintenance release fixed a hard-to-notice bug with
+        NJFIND's file matching routines.  The program would
+        occasionally match files when the disks file name was
+        shorter than the wildcarded filename, even if the wildcard
+        should not have affected the match.
+
+        This file was uploaded to The Hounds' Haven BBS, BIX, and
+        CompuServe.  It was also posted in the IBM Users' Group on
+        the Networking and World Information system.
+
+
+Version 1.50 of 25 March 1990           - Unreleased
+
+        David Nanian, author of BRIEF, and a really nice guy, noticed
+        that I was free()'ing pointers in an unacceptable way.  This
+        caused NJFIND to crash certain compilers in certain instances
+        on certain systems.  I use his editor, he beats the daylights
+        out of my utilities.  What can I say?
+
+Version 2.00 of 3 April 1990            - Enhanced, rerelease
+
+        NJFIND has these new features in this release:
+
+                Check for NJEVAL variable to keep your favorite options
+                  around without retyping them on the command line.
+                Support for DWC archives.
+                Added "total files found' line to output display.
+
+        This file was uploaded to The Hounds' Haven BBS, BIX, and
+        CompuServe.  It was also posted in the IBM Users' Group on
+        the Networking and World Information system.  A distribution
+        diskette was also mailed to Nelson Ford for inclusion in his
+        Public (Software) Library.  Wayne Chen received a copy for 
+        his "latest versions list", and Patrick Grote got a copy for
+        his Shareware Reviews.
+
+ 	I tested NJFIND against archives created with PKZIP Version
+	1.10 for this release.
+
+Version 2.10 of 25 August 1991		- Enhancement
+
+	NJFIND now supports the ARJ file format.  It also is DOS 5.0
+	aware.  Previous versions of NJFIND would not search any
+	drives under DOS 5.0 when the /R option was given.  Some speed
+	enhnacements were made, and some messages were tidied up.
+
