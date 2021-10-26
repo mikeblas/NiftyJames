@@ -1,0 +1,14 @@
+#
+# MAKEFILE for NJEVAL (debug defined)
+#
+# (C) Copyright 1988 by Mike Blaszczak
+
+njeval.obj:	njeval.c
+	njpl -t cl "/Zi /Od /DDEBUG /DLINT_ARGS /c njeval.c"
+
+njevalfn.obj:	njevalfn.c
+	njpl -t cl "/Zi /Od /DDEBUG /DLINT_ARGS /c njevalfn.c"
+
+njeval.exe:	njeval.obj njevalfn.obj
+	njpl -t link "njeval+njevalfn,njeval.exe,njeval.map /map /noi /codeview,\lib\snjlib;"
+

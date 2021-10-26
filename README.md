@@ -16,6 +16,12 @@ This TSR program watches the clock and plays chimes on the quarter-hour, just li
 
 I was fascinated with the OBJ file format that the Microsoft tools generated -- the output from the compiler and assembler. After getting documentation about the file format from Microsoft, I wrote this dumper to learn more about the file format. My intention was to write a linker eventually, but I never got that far.
 
+## NJEVAL - Expression Evaluator ##
+
+NJEVAL was a little tool that would evaluate an expression at the command line -- a calculator.  There's problably not a better example of my lack of training: I wrote this without having ever taking a compiler or languages class. In fact, I didn't even have a compiler *book*. The code is pretty awkward, for sure. 
+
+This is one of the few applications that has multiple versions in git. I was lucky enough to find older versions. There were some pretty serious bugs in the first version.
+
 ## NJFIND - File Finder ##
 
 NJFIND is a command-line tool to find files. It recursively searches for matching file names, and can also search inside various archive types. It would've been good to add caching or indexing, but it's still pretty cool.

@@ -1,0 +1,355 @@
+
+
+
+Nifty James' Famous Expression Evaluator
+Version 1.01 of 1 March 1988
+(C) Copyright 1988 by Mike Blaszczak
+
+
+THIS PROGRAM MAY NOT BE REDISTRIBUTED FOR PROFIT WITHOUT THE PRIOR WRITTEN
+CONSENT OF THE AUTHOR.  RESELLING OR PROVIDING THIS PROGRAM AS AN
+INCENTIVE TO PURCHASE IS A CRIME.
+
+
+
+
+Nifty James' Famous Expression Evaluator, or NJEVAL, is a program designed
+to evaluate mathematical expressions input on the command line.  NJEVAL is
+thus a "command line calculator" for MS-DOS machines.
+
+I wrote this program to avoid the irony of having a pocket calculator next
+to my all-powerful IBM PC Compatible.  I also don't like the
+programmer's calculators which have saturated the TSR market.  There
+are too many TSR's as it is, and they all cause a problem in one way
+or another.
+
+
+Overview
+--------
+
+As well as being disgusted by my Texas Instruments' proximity to my IBM, I
+also wanted to learn about expression parsing.  My awe started when I
+realized the complexity of a BASIC interpreter.  Nailing keywords and
+looking for qotations is relatively easy.  However, writing one routine
+with the ability to simplify
+
+       35+9
+
+as well as
+
+       SIN(3.141592/3)-COS(3.141592/2)
+
+simply astounded me.
+
+Since that time, when I was hacking on a singleboard computer called an
+AIM-65, I've wanted to write a program to evaluate such expresions.
+
+Since I realized much of my time spent programming and working was spent
+looking for a calulator while a megaflop-capable machine sat in front of
+me, I was motivated.
+
+
+
+Workings
+--------
+
+NJEVAL is very easy to use.  Simply type the program's name, NJEVAL, and
+follow it with a space.  After that space, type the expression you'd like
+to evaluate.
+
+For example,
+
+     NJEVAL 35+9
+
+would find the answer to 35+9, which is 44.
+
+NJEVAL supports the basic "four banger" functions; addition,
+multiplication, subtraction, and division.  The syntax used is very
+similar to that of the mathematic expressions used by most modern computer
+languages and by most spreadsheet programs.
+
+For example, to add two to eight and multiply that result by thirteen, one
+would use
+
+     NJEVAL (2+8)*13
+
+
+Exponentiation
+--------------
+
+The operator precedence used is similar to most high level languages, as
+well.  Multiplication and division are "higher" than addition and
+subtraction.  Expnentiation, represented by the carat (^) is lower than
+all four operators.
+
+Thus, you can use
+
+     NJEVAL 2^1/2
+
+to find 2^0.5.
+
+It should be noted, by the way, that this is a good way to find
+roots.  The program has no sqrt() or curt() functions.  You may
+recall from your math courses that, to find the yth root of x, you
+can do
+
+     x^(1/y)
+
+Of course, NJEVAL will complain if this results in a complex number.
+For example, the result of the above is complex if x == -4 and y == 4.
+
+
+Range
+-----
+
+NJEVAL uses the full "double" precision of the C language.  Thus, answers
+will be represented to a maximum of 16 digits to the right of the decimal
+point.
+
+NJEVAL allows all numbers between 1.7E-308 and 1.7E+308 to exist.  Of
+course, the negatives of these numbers are also available.  It should be
+noted that NJEVAL doesn't check for overflows or underflows.  NJEVAL
+will, however, flag "digital math" nono's, such as division by zero
+and exponentiations resulting in complex numbers.
+
+To use these numbers, just write them as you would specify them in a
+program like 1-2-3 or in a program:
+
+           3.1415
+           0.1
+           -34
+           18.01
+           35e-2
+           6.2e+23
+
+
+Modulo Division
+------ --------
+
+NJEVAL, as well as complementing the four functions with
+exponentiation, allows the use of the modulo operator.  This operator
+provides the integral "remainder" of division.  Since 5 divided by
+two is two remainder one, the command
+
+     NJEVAL 5%2
+
+will result in the answer 1.0.
+
+
+Functions
+---------
+
+NJEVAL supports an extensive list of functions, as well.  Functions
+may be specified in either upper or lower case, and may be
+abbreviated to as little as three characters.  (Of course, if the
+function's name is one or two characters long, all characters must be
+specified.)
+
+These functions are supported by NJEVAL:
+
+          abs(x)  -  absolute value of x
+          acos(x) -  arc cos of the angle x radians
+          acot(x) -  arc cotangent of the angle x radians
+          acsc(x) -  arc cosecant of the angle x radians
+          asec(x) -  arc secant of the angle x radians
+          asin(x) -  arc sine of the angle x radians
+          atan(x) -  arc tangent of the angle x radians
+          cos(x)  -  cosine of the angle x radians
+          cot(x)  -  cotangent of the angle x radians
+          csc(x)  -  cosecant of the angle x radians
+          deg(x)  -  convert x radians to degrees
+          exp(x)  -  e to the power of x
+          fact(x) -  factorial of x
+          ln(x)   -  natural (base e) logarithm of x
+          log(x)  -  base 10 logarithm of x
+          pi(x)   -  pi times x
+          rad(x)  -  converts x degrees to radians
+          sec(x)  -  secant of the angle x radians
+          sin(x)  -  sine of the angle x radians
+          tan(x)  -  tangent of the angle x radians
+
+If any of these functions are passed invalid values, NJEVAL will
+abort with an error.  The arc-trig functions, for example, cannot
+accept values outside of the closed interval [0,1].
+
+Using these functions is similar to any other high level language.
+The functon name and its ending left parenthesis function as an
+opening parenthesis in the precedence of the evaluation.  Thus,
+
+       sin(.7)^2+cos(.7)^2
+
+would evaluate to 1.0.  You may find that certain identities don't
+evaluate to what you would expect them to.  This is because of the
+limits of precision in computer math when dealing with irrational
+numbers.  While the sin^2+cos^2 identity almost always works, the
+sec^2-tan^2 identity usually doesn't work, for example.
+
+Along with this problem, another comes.  For example, mathematically
+
+       sec(0.5*pi)
+
+is undefined.  However, NJEVAL will evaluate
+
+       sec(pi(0.5))
+
+to be a very (very) large number.  This is again because of the
+rounding errors in binary math.  It is a good approximation,
+considering
+
+       lim      (sec(x))    ==  +infinity
+     x -> 0.5+
+
+If you use an 8087 or an 80287, you may want to recompile NJEVAL.
+The program, as distributed, doesn't take advantage of these math
+coprocessors.  Instead, it uses the emulator library supplied with
+Microsoft C.  Recompiling the program with the math coprocessor-specific
+libraries will allow much greater accuracy to be realized.  The speed
+improvement these chips bring about won't be noticable in NJEVAL's small
+reliance on the actual math of the operations.
+
+
+Operation
+---------
+
+This section briefly describes the innards of NJEVAL.  Skip it if
+you're not interested; it isn't required reading.
+
+NJEVAL operates by evaluating the expression on the command line.  I
+can't say that NJEVAL uses any set method, as I'm literate on the
+various methods available to programmers.  From what I understand,
+however, NJEVAL is most like an "expectant" parser.  That could be
+entirely wrong, and I can't check as my book on compiler design is
+somewhere in a box.  Never write documentation after you move, I
+guess.
+
+NJEVAL first assembles all the argv[] strings into one giant string.
+This is simply because it is more convenient to chop up the string
+than to step through all the information in the argv[] list.
+
+NJEVAL then takes this string and breaks off tokens.  The tokens are
+kept in a doubly linked list.  Each number, operator, function name,
+and parenthesis is kept in an entry in this list.  NJEVAL uses three
+variables to keep track of which tokens are valid.  For example, one
+binary operator can't follow another.  So, when NJEVAL finds a binary
+operator, it sets the flags so that, if the next term is binary
+operator, an error will be generated.
+
+Here, the real work starts.
+
+NJEVAL surrounds the original expression with an additional set of
+parenthesis.  This little trick allows the heart of the operation to
+go more smoothly.
+
+NJEVAL looks for the rightmost opening parenthesis on the line.  In
+the example of
+
+       (35+15-2)/(2*(3+7))
+
+the rightmost left parenthesis is in the denominator, just before the
+three and just after the multiplication.
+
+NJEVAL then looks for the matching right parenthesis.  In the above
+example, it's after the seven which follows the addition in the
+denominator.
+
+NJEVAL uses these parenthesis as starting and ending points.
+Starting with the left parenthesis, NJEVAL works towards the right.
+If it finds an operator having a greater precedence than the other
+operators that were found, NJEVAL remembers its position.
+
+Once it reaches the right parenthesis, NJEVAL then evaluates the term
+containing the operator with the most precedence.   It replaces the
+operator and its operands with the result of that operation.  So, the
+above example would become
+
+       (35+15-2)/(2*(10))
+
+Since (10) is perfectly simplified, NJEVAL erases the surrounding
+parenthesis, yielding
+
+       (35+15-2)/(2*10)
+
+The process then repeats leaving
+
+       (48/20)
+or
+       2.4
+
+NJEVAL prints this result and terminates.
+
+
+
+Registration
+------------
+
+I'm very proud of NJEVAL as a program.  It evolved relatively
+smoothly, when time permitted, and was fun to develop.  I think the
+code is graceful and well written.
+
+If you find NJEVAL of 'educational' value, or find that it is useful
+to you, please register your copy.  Registering guarantees you a
+thank you letter from me, as well as a list of other program's I've
+released.  If you have any questions about anything, I'll be more
+likely to answer them if you enclose a check.  Questions about
+assembly language are my forte, while questions about relationships
+aren't.  Please use your judgement.
+
+I used to be a starving high school student, and now I'm a struggling
+college student with a full-time job.  Any registration you can make
+will be greatly appreciated.  My 'recommended' price for the program
+is $10, however.
+
+
+Innards Exposed
+---------------
+
+If you're the programmer type, you might want to recompile NJEVAL
+with the DEBUG symbol defined somewhere.  This will create a version
+of NJEVAL that will print a great deal of "inside information" about
+the program's operation.  You may find it informative and insightful.
+
+
+
+Advice
+------
+
+Never let evil enter your thouhts, and send your checks to
+
+Mike Blaszczak
+35 Ginger Lane #229
+East Hartford, CT  06108
+(203)-568-2700
+
+If you decide to write or register, PLEASE be sure to let me know
+what version of which program you have.  This will allow me to better
+determine if you need to receive an update diskette.
+
+
+Hindsight 20/20
+---------------
+
+Thanks to Mike Todd for his "IBMSIG Gold Card" Service.  He found a
+problem with DOS Versions earlier than 3.00.  He also puts up with my
+persistent rereleasing of "new versions".  The fix for the bug he found,
+as well as a problem with the getnumber() routine and scientific notated
+numbers was the cause for version 1.01.  Version 1.00 was never released
+to the public.
+
+A big THANK YOU to everyone who will register this program and has
+registered my other programs!  Today, I got a "cheque" from England.  I
+was pretty impressed, I mean to tell you.  Thanks!
+
+
+Crystal Ball
+------------
+
+I'm conidering a version of NJEVAL which will support math (and other
+pertinent operations) in other bases; most notably, hexidecimal.
+
+It is relatively easy to add functions to NJEVAL.  Only single
+variable functions are provided for in this version, however.  If
+other functions are of interest to you, let me know and they'll be in
+the next release.  Many statistical functions (other than the
+factorial) are of two or more variables, so they aren't here.
+
+
