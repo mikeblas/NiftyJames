@@ -1,0 +1,13 @@
+
+#
+# MAKE file for NJPR
+#
+# (C) Copyright 1988 by Mike Blaszczak
+#
+
+njpr.exe	: njpr.c
+		cl -Ox -AC njpr.c
+		exepack njpr.exe njpr.pak
+		erase njpr.exe
+		ren njpr.pak njpr.exe
+

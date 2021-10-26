@@ -1,0 +1,276 @@
+
+
+
+Nifty James' Famous Move Utility
+Version 1.00 of 16 January, 1989
+
+(C) Copyright 1989 by Mike Blaszczak
+All Rights Reserved.
+
+
+
+
+REDISTRIBUTING THIS PROGRAM FOR ANY PROFIT WITHOUT THE PRIOR WRITTEN
+CONSENT OF THE AUTHOR IS STRICTLY PROHIBITED.  THIS PROGRAM MAY NOT
+BE RESOLD IN ANY FORM.  DOING SO IS A CRIME.  THE AUTHOR ASSUMES NO
+LIABILITY, DIRECT OR CONSEQUENTIAL, FOR THE USE, MISUSE, OR ABUSE OF
+THIS PROGRAM.
+
+NJMOVE is NOT free software.  If you purchased NJMOVE from a disk
+duplication service, you have paid only for the disk and the service
+of copying the program.  If you find that you're using the program,
+you MUST REGISTER your copy of the program.
+
+The idea behind Shareware software is that it will allow you to try
+before you buy.  Commercial software is governed by bougs licensing
+agreements.  If you buy something and open the package the disks come
+in, you can't recoop the money that you spent on the program, if its
+$59 or $5900. 
+
+If you're using this Shareware program often and you haven't sent in
+a contribution, you're stealing software.
+
+
+
+Introduction
+------------
+
+Often, when managing hard disk drives or even floppy disk systems, it
+is necessary to move a file from one subdirectory to another. 
+Unfortunately, DOS provides no command to do this.  You can use COPY
+and ERASE to get the job done, but that is very inefficient.  Often,
+that method will not work because there is not enough free space on
+the disk drive to accomodate two copies of a large file.
+
+Bigger computers, like the VAX and like systems running UNIX can use
+the same old RENAME command to move a file to another device or
+across directories.  However, PC-DOS doesn't have this feature, so
+that's why I wrote NJMOVE.
+
+Oddly enough, the internal "rename" function that DOS has can not
+rename a file across a directory or a device.  The rename commands on
+larger systems, like VAX VMS, can easily do this.  When using both a
+minicomputer or mainframe, and a PC, it is very easy to become
+spoiled by the more powerful rename commands.
+
+
+Enter NJMOVE.  This program has the same usage as the RENAME command
+of DOS:
+
+        NJMOVE <source> <dest> [options]
+
+<source> is the source filename, and <dest> is the destination file
+name.  Both the <source> and <dest> filenames may contain wildcards.
+NJMOVE will handle them in the same way that DOS' own RENAME command
+handles them.  The [options] following the command parameters
+provide a way to effect the way that NJMOVE handles the files it
+processes.
+
+NJMOVE is best understood by examining examples of its invocation,
+and studying the result of the commands.  Here are a few examples of
+the application of NJMOVE:
+
+
+        NJMOVE testfile.doc newname.doc                        (1)
+
+Since NJMOVE has a similar function to DOS' own RENAME command, you
+can use it to rename files without changing the directories.  Example
+1 would simply change the name of TESTFILE.DOC to NEWNAME.DOC.
+
+
+        NJMOVE \fromroot.txt \wp5\workfile.txt                 (2)
+
+This example moves the file in \FROMROOT.TXT into \WP5\WORKFILE.TXT.
+Here, NJMOVE shows it strength over the RENAME command and the COPY
+comannd.  With one command, you have moved a file into a
+subdirectory.  The COPY command would require an additional RENAME
+command, and DOS' RENAME command simply can't do a rename across
+directories.
+
+
+        NJMOVE E:\MYFILE.* E:\MYDIR                            (3)
+
+Here, all the files matching the description MYFILE.* in the root
+directory of drive E are moved in to the directory MYDIR.  Again,
+this is an example of NJMOVE's file moving abilities, not supported
+by an other DOS command.  The program moves the files into MYDIR, and
+removes the from the root directory.
+
+It is important to note that, in example three, if MYDIR were not a
+directory, NJMOVE would have renamed the files to MYDIR.*.  For
+example, MYFILE.TXT would have become MYDIR.TXT.  If you mistype the
+name of your directory, you will find that you've renamed all of the
+files.
+
+NJMOVE can also "move" files across a disk drive.  This is useful if
+you're moving something off of your hard drive to a floppy to make a
+backup, or if you're moving something from one disk to another. 
+NJMOVE will decide that the two disk devices aren't equal, and will
+copy the file.  In this example,
+
+	NJMOVE E:\THIS.* A:\SUBDIR\KUMQUAT                     (4)
+
+All of the files in the root directory of drive E, matching the file
+specification THIS.* will be moved to the \SUBDIR\ directory of A:,
+and will be called KUMQUAT.  The file extensions of each file will
+remain the same.  This is just as if you had typed
+
+	RENAME E:\THIS.* KUMQUAT.*
+	COPY E:\KUMQUAT.* A:\SUBDIR\
+	ERASE E:\KUMQUAT.*
+
+except you have completed the procedure in one quick step.  It is
+important to remember that NJMOVE will move a file in this manner
+EVEN IF the file has its write-protect bit set.  The file created by
+NJMOVE on the new disk drive, however, will have the same file
+attributes as the file that NJMOVE found.
+
+While on the subject of file attributes, it is also important to note
+that NJMOVE sets the "archive" bit of every file that it renames or
+moves.
+
+
+That's essentially how NJMOVE works.  Especially given example four,
+you should have a pretty good idea how NJMOVE can replace the RENAME
+command, and how it can be used to replace the RENAME-COPY-ERASE
+sequence.  
+
+NJMOVE has one option.  If you put /C anywhere on the command line,
+the program will ask you to confirm what you're doing.  If you type
+"Y", "1", or "T" in reply to the prompt, you will take the action
+indicated.  If you type "N", "0" or "F", you will not take the action
+and the program will move to the next case.
+
+If you enter <CTRL+Z> or "Q", NJMOVE will return to DOS without
+processing any other files.  If you type "A", for "All", NJMOVE will
+handle the rest of the files without asking you for your feedback on
+it.
+
+If you see what NJMOVE is doing, and you decide that you don't like
+it, you can get out safely by using <CTRL+C> or <CTRL+BREAK>.  NJMOVE
+sensitive to these keys -- interrupting the program in that way
+shouldn't ever cause any damage to your files.  You might end up with
+files in both places, but I doubt that you will ever find that you've
+erased the file completely.
+
+
+
+
+
+
+Errors
+------
+
+If there is a naming collision, NJMOVE will not move the file and
+will stop execution; not other files will be moved, even if a
+wildcard was given as the source file specification.  NJMOVE will
+print the error message
+
+	NJMOVE: File naming collision
+
+and return to the DOS prompt.  If you are running in a BAT file, you
+will find that NJMOVE has set the ERRORLEVEL to 5.
+
+NJMOVE will terminate and print the usage of the program if you
+include /HELP on the command line, if you have specified no files at
+all, or if you have used a bad or mispelled option.  In this event,
+NJMOVE will set the ERRORLEVEL to 1.
+
+If NJMOVE can't find any matching files, it will say so with a
+message that looks like this:
+	        
+	NJMOVE:	No files matched (Filename)
+
+It will quit with ERRORLEVEL set to 2.  If one of the filenames you
+gave didn't make sense to NJMOVE, the ERRORLEVEL will be 3.
+
+If NJMOVE runs out of space while copying a file, or if the
+destination device fails or is write protected or somesuch, the error
+message you'll get will name what the problem is, and ERRORLEVEL will
+be set to 4.
+
+Of course, if NJMOVE completes sucessfully, you'll have no error
+messages and ERRORLEVEL will be zero.
+
+
+
+
+Problems
+--------
+
+If you run into a problem with NJMOVE, please do write to me.  A
+great deal of work went into hand crafting this assembly langauge
+program.  I wish everybody to know that I used Microsoft Development
+tools to make the package; Microsoft LINK, The Microsoft Macro
+Assembler, and Microsoft's CodeView Debugger.  The program was
+developed for Microsoft MS-DOS.  At any one point during the
+development process, I was experiencing a problem with at least one
+of the above packages.
+
+I also wish it to be known that Microsoft Technical Support didn't do
+anything for me.  I wrote them, and I tried calling them.  (How long
+can *you* afford to stay on hold during a 2500-mile long distance
+call, huh?)  They didn't do anything for me.
+
+However, I received a great deal of support from my friends online.
+All of my questions were answered by people who've had the same
+problem before.  That should tell you something.  I mean, I spent,
+what?  Four-hundred some dollars on software alone, and, within
+reason, I wasn't supported as I should have been?
+
+NJMOVE does goof around with one undocumented interrupt function in
+MS-DOS, but it seems to be harmless.  If you have a problem, please
+do write me and we'll see if we can work it out.  I'm not certain
+that the call will work on all systems everywhere (and that's
+nobody's fault but Microsofts', for their splendid job of their own
+documentation.)
+
+By the way, the only product I didn't have a problem with was BRIEF,
+from Solution Systems.  It kicked butt.
+
+Anyhow, please do drop me a line if you get confused about the usage
+of the program, or if you have trouble getting it to work the way it
+should.
+
+I haven't tested NJMOVE on a network system (ie, a LAN) simply
+because I don't have goof-around access to one.  I have tried using
+NJMOVE on files that are on drives and directories  that have been
+attached and substituted onto other drives, and I met with success. 
+However, those features of DOS are about as underdocumented as any
+other part of DOS, so I might've missed something and there may be a
+way to confused NJMOVE into thinking it's not working when it really
+is, or visa versa.
+
+
+Registration
+------------
+
+If you use this program, or find it of use, please do send me a
+registration fee.  I'm asking for $10, but I won't be insulted if you
+send $5, nor will I send you a refund if you compliment me with a $20
+cheque.
+
+In case you haven't noticed, I've written a lot of other Shareware
+software.  I'm really looking forward to making big some day; if you
+register this program, I might give you a ride in my Porshce, if
+you're in town.  Until then, I can send you a snapshot of my bicycle.
+(And, if you're interested in hiring a young programmer, ask me for
+my resume.)
+
+Thank you very much.
+Don't drink and drive.
+
+
+
+
+
+Mike Blaszczak
+112 Verlinden Drive
+Monroeville, Pennsylvania
+	15146
+
+
+
+
+
+

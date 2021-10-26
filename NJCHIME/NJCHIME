@@ -1,0 +1,15 @@
+njchime.pub	: njchime.asm
+	public	njchime.asm
+
+njchime.obj	: njchime.asm
+	masm /Ml /v /w2 njchime,njchime.obj,E:\LISTINGS\NJCHIME;
+
+njchime.com	: njchime.obj
+	link njchime,,njchime.map /map;
+	exe2bin njchime.exe njchime.com
+	erase njchime.exe
+
+njchime.sym	: njchime.map
+	mapsym -l njchime
+
+

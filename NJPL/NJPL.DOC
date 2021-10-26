@@ -1,0 +1,422 @@
+
+
+Nifty James' Famous Program Logger
+
+Version 1.00 of 2 January 1988
+
+(C)opyright 1988 by Mike Blaszczak, all rights reserved.
+
+
+THIS PROGRAM MAY NOT BE REDISTRIBUTED WITHOUT THE PRIOR WRITTEN
+CONSENT OF THE PROGRAM AUTHOR.  DISTRIBUTING THIS PROGRAM FOR RESALE
+OR AS AN INCENTIVE TO PURCHASE IS NOT PERMITTED.  THESE PROGRAMS AND
+THEIR SOURCECODE ARE THE PROPERTY OF THEIR AUTHOR UNTIL THE USER'S
+COPY HAS BEEN REGISTERED.  THE USER'S ACKNOWLEDGE REGISTRATION
+GRANTS THAT USER UNLIMITED USAGE OF THE PROGRAM, BUT THE USER MAY
+NOT REDISTRIBUTE THE PROGRAM, SOURCECODE, OR DOCUMENTATION FILES.
+
+
+             "Who needs information
+              This high off the ground?
+              Just give me confirmation,
+              We could win a million pounds!"
+                      -- Roger Waters, "Radio KAOS",
+                         and perhaps an IRS agent in
+                         an audit hearing in your near
+                         future.
+
+
+
+     Often, it is neccessary to keep track of a program's use.
+     Sometimes, it may be for tax purposes.  Other times, it's just
+     for curiosity's sake: "Do I really use that program often?", or
+     "How long have I spent developing that game?"  NJPL is a program
+     that allows you to do this in a rather elegant manner.
+
+     NJPL is a program spawner.  That means that, when NJPL is run,
+     it runs another program.  The program that NJPL runs is the
+     program that you wish to log.  No part of the NJPL system is a
+     TSR utility.
+
+     This package consists of two programs.  NJPL and NJPLR.  NJPL is
+     "Nifty James' Program Logger".  This is the program that
+     actually does the program logging.  NJPLR is "Nifty James
+     Program Log Reporter".  This program generates reports from the
+     files that NJPL creates and maintains.
+
+     First, we will describe NJPL and its usage.
+
+
+The Program Logger
+--- ------- ------
+
+     NJPL.EXE is the program logger program.  It is written in the C
+     programming language, and its sourcecode is included in the .ARC
+     file or on the distribution diskette that you received when you
+     obtained the NJPL package.  If you're not a programmer, or you
+     don't have any interest in what makes NJPL tick, you don't need
+     the NJPL.C sourcecode file.  However, if you distribute this
+     program to other BBS systems, I'd like to ask that you keep all
+     the files together.
+
+     When you use a computer program under DOS, you type its name,
+     and perhaps a few "arguments" for it.  Starting a spreadsheet
+     might take this:
+
+          123
+
+     while linking a long program might take this
+
+          LINK E:NJMAIN+E:NJSUBS,NJMAIN,/NOI /CODE /MAP,\LIB\SNJIB;
+
+     In both instances, the command that you type to run the program
+     is called "the command line".
+
+     The command line consists of the name of the program to be run.
+     In the first example, it is "123", while in the second example,
+     it is "LINK".  Any arguments that the program needs, such as
+     other filenames or option switches, are also a part of the
+     command line. In the first example, 123 doesn't require any
+     additional information, so it has a rather short command line.
+     However, in the second example, LINK needs several other pieces
+     of information before it can run.  LINK has a very long command
+     line.
+
+     When NJPL is run, it takes as its command line the command line
+     of another program.  So, if we were to run the NJPL program to
+     log our use of 123, we would enter this:
+
+          NJPL 123
+
+     If we were going to log our use of LINK, we would do this:
+
+          NJPL LINK E:NJMAIN+E:NJSUBS,NJMAIN,/NOI /CODE /MAP,\LIB\SNJIB;
+
+     As you can see, to use NJPL we simply tack "NJPL" before the
+     name of the program that we're running.
+
+     When NJPL is loaded, it does a few housekeeping chores and then
+     takes a look at the system clock.  When it has read and stored
+     the time of day, it runs the program that you've specified with
+     the command line that you've specified.  When that program has
+     finished, NJPL remembers the errorlevel code that the program
+     produced, and then goes to figure out how long the program has
+     run.  It prints the start, finish, and duration times that it
+     has calculated.
+
+     Then, it looks for a log file to store that information in.
+     NJPL keeps all of the log information in a file called NJPL.PLF.
+
+     The NJPL.PLF file will be created in the default directory.
+     However, if you'd like to keep the .PLF file in a separate disk
+     directory, or on another disk, you can use an environment
+     variable to tell NJPL where to put the files.  (You can get more
+     information on Environment variables if you look under the "SET"
+     command in the DOS Reference Manual, or in your favorite DOS
+     reference or tutorial.)
+
+     To tell NJPL where to store the files, use the environment
+     variable NJPL.  To set the variable, give DOS the commnad
+
+          SET NJPL=<pathname>
+
+     <pathname> is the name of the path where you would like to store
+     the files.  If you wanted to store the files in "C:\LOGFILES",
+     for example, you would type
+
+          SET NJPL=C:\LOGFILES
+
+     NJPL and NJPR will know to look for the log files in that
+     directory.
+
+     When you use NJPL, you'll notice that the program prints out
+     information about how long it took the timed program to run.
+     In some cases, this can be undesirable.  If you don't want to
+     display the information, use the /T option *before* the command
+     line of the program that you want to log.  If you wanted to use
+     LINK without seeing the timing information that NJPL prints, you
+     would type
+
+     NJPL /T LINK E:NJMAIN+E:NJSUBS,NJMAIN,/NOI /CODE /MAP,\LIB\SNJIB;
+
+     The /T option *must* appear before the program's name.
+     Otherwise, NJPL will assume that it's an option for the program
+     that you're logging, and pass it along.
+
+     NJPL also allows you to keep a record of your entire system
+     usage.  This feature is enabled by two options on the NJPL
+     command line.  The options are "/ON" and "/OFF".  If you type
+
+          NJPL /ON
+
+     NJPL would make a note in a file called SYSUSAGE.LOG that you
+     had turned your computer on at the current time.  Similarly, if
+     you use
+
+          NJPL /OFF
+
+     NJPL will add a note to the SYSUSAGE.PLF file stating that you
+     had turned the system off at the current time.
+
+     Since I have a hard disk drive, I have conveniently tucked the
+     "NJPL /ON" command on the last line of my AUTOEXEC.BAT file.
+     Note that since NJPL makes use of the NJPL= environment setting
+     to place the SYSUSAGE.PLF file.  Thus, if you install "NJPL /ON"
+     in your AUTOEXEC.BAT file, you should be sure to put the SET
+     command before the NJPL command.
+
+     Also, I use a .BAT file called SHUTDOWN.BAT to close my system
+     for the day.  This .BAT file runs my NJTIDY program (a separate
+     package that erases temporary and backup files from all
+     subdirectories), a head-park program, and then runs "NJPL /OFF".
+     You *must* remember to use NJPL /OFF after using NJPL /ON.  The
+     reasons for this are covered a little later in the NJPR section.
+
+     You can use the DOS TYPE command to display the information that
+     NJPL puts into the NJPL.PLF and SYSUSAGE.PLF files, but you may
+     not be able to make sense of it.  It also doesn't prove to be
+     very useful, especially if you'd like to keep totals or print
+     daily usage lists.  That's where the NJPLR program comes in.
+
+
+The Report Generator
+--- ------ ---------
+
+     Recording the usage of your computer, and its programs, is only
+     a half of the problem that the NJPL system solves.  The other
+     half is greeted by the NJPR program.  NJPR takes the
+     SYSUSAGE.PLF and NJPL.PLF files and allows you to generate
+     useful reports from the information they contain.
+
+     NJPR is run from the command line, with several options, just
+     like NJPL is.  Each of the five options that NJPR has dictate
+     if a certain report will be generated or not.  These are the
+     five report types:
+
+            o   Daily program usage
+            o   Total usage by program
+            o   Daily task usage
+            o   Total usage by task
+            o   Total system usage
+
+     Daily program usage is the amount of time that was spent in each
+     program each day.  That report lists groups of programs by each
+     day.  For each program that NJPL has record of, NJPR will list
+     the number of times it was run and the total amount of time that
+     it was used during that day.  It also shows the percentage of
+     time the program was active during the day.  A sample portion of
+     the NJPR Daily Usage report looks like this:
+
+     For 8 November, 1987:
+             edwinn   was run 12 times and was active for 1:55:03.54 (32.055%)
+             link     was run 5 times and was active for 0:00:50.36 (0.234%)
+             lsedd    was run 13 times and was active for 0:29:37.85 (8.255%)
+             msc      was run 45 times and was active for 0:39:35.55 (11.030%)
+             nethack  was run 9 times and was active for 0:39:14.94 (10.934%)
+             procomm  was run 5 times and was active for 2:14:34.59 (37.492%)
+             total usage: 5:58:56.87
+
+     The Overall Program Usage report reads the whole NJPL.PLF file
+     and displays the amount of time that each program was active.
+     That report may look like this:
+
+Total program usage:
+        cl was executed 124 times for 1:23:10.81, or 0.927% of total usage
+        counter was executed 9 times for 0:01:38.12, or 0.018% of total usage
+        exemodd was executed 21 times for 0:00:20.32, or 0.004% of total usage
+        linesin2 was executed 3 times for 0:00:03.36, or 0.001% of total usage
+        link was executed 223 times for 0:53:08.28, or 0.592% of total usage
+        lsedd was executed 536 times for 23:43:03.97, or 15.851% of total
+               usage
+        masm was executed 5 times for 0:01:45.01, or 0.019% of total usage
+        msc was executed 441 times for 4:48:17.83, or 3.211% of total usage
+        nethack was executed 45 times for 2:40:28.78, or 1.788% of total usage
+        procomm was executed 160 times for 91:06:22.21, or 60.889% of total
+               usage
+        symdeb was executed 20 times for 0:32:52.48, or 0.366% of total usage
+        symdebb was executed 5 times for 0:02:57.34, or 0.033% of total usage
+
+        Total time 149:37:35.47
+        Report starts on November 6, 1987 and ends on December 5, 1987
+
+
+     NJPR generates two report formats that are very similar to the
+     Program report formats.  These report formats are called the
+     "Task" formats.  Often, you may use the same program for several
+     different applications.  For example, at one point during the
+     day, you may use EDLIN to write a letter to your mother.  Later
+     on, you may use it to do development work on a program that
+     you're writing.  These two applications of the same programs are
+     very different, and it may be desirable to differentiate between
+     the two applications.
+
+     Thus, NJPR has the "Task" Reports.  The format of these reports
+     is very similar to the format of the Program reports.  The only
+     difference is that NJPR will look at the program's name *plus*
+     the first ten characters of the command line used when that
+     program was executed.
+
+     This way, you can easily discern between the different
+     applications that each of your programs was used for.
+
+     The third report NJPR makes use of is the system usage report.
+     This is used in paralell with the /ON and /OFF options of NJPL.
+     This report simply lists the amount of time your computer was
+     actually on each day.  For some people, this can be useful
+     information.
+
+     To activate each of the reports when running NJPR, enter the
+     corresponding option on the program's command line.  This is a
+     list of the report formats and their respective options:
+
+            Report                    Option
+            ------                    ------
+            Daily Program Usage         /DP
+            Daily Task Usage            /DT
+            Overall Program             /OP
+            Overall Task Usage          /OT
+            System Usage                /SY
+
+     Both letters of the option must be specified.  The options may
+     be specified in every order.
+
+     Typing
+
+          NJPR /SY /OT /DT
+
+     for example, will generate the System Usage report, the Overall
+     Task Usage report, and the Daily Task Usage Report.  The order
+     that the program prints the reports in is always the same:
+
+                Total Task Usage
+                Daily Task Usage
+                Total Program Usage
+                Daily Program Usage
+                System Usage
+
+     If you'd like to, you can redirect the output of the NJPR
+     command to the printer or to a disk file for later use.
+
+     That's all there is to it.  Creating, maintaining, and printing
+     system usage logs on MS-DOS and PC-DOS systems is now a
+     relatively simple and painless task!
+
+
+Possible Problems
+-------- --------
+
+     The two problems that you can run into while using the NJPL
+     system both involve the program logger, NJPL.EXE.  As mentioned
+     above, NJPL needs the command line of the executed routine.  It
+     then passes it to the executed program.  Due to the way that the
+     C language startup routines handle the command line, the system
+     may or may not pass the correct command line.  The fool proof
+     way to get NJPL to work is to enclose the command line in
+     quotation marks.  For example,
+
+         njpl -t cl "/G2 /W3 /DLINT_ARGS /DDEBUG /VER=35 mysystem.c"
+
+     would work correctly, but
+
+         njpl -t cl /G2 /W3 /DLINT_ARGS /DDEBUG /VER=35 mysystem.c
+
+     may not.
+
+     This problem is characterized by the improper execution of the
+     program that you are logging.  If the program insists that the
+     correct information wasn't on the command line, or it doesn't
+     act upon the command line correctly, this is most likely the
+     problem.
+
+     The other problem is a matter of convenience.  I use several
+     different programs, and I'm used to typing certain commands to
+     get them working.  For example, I instinctively type "lsed" to
+     start my editor, "acad" to make a drawing, and "xtalk" to do my
+     telecommunications work.
+
+     Since I like to time these programs, I would have to type
+
+           njpl xtalk
+
+     for example, to use them.  The obvious alternative is a batch
+     file containing this command.  However, when using this
+     alternative we run into the problem of command names.  I can't
+     have a .BAT file called XTALK.BAT if I have a program file
+     called XTALK.EXE.  This is because of the way that DOS'
+     COMMAND.COM works.
+
+     So, it might seem convenient to change the name of a program to
+     have a .BAT file that runs it.  Since I often use the SYMDEB
+     program, I changed the name of SYMDEB.EXE to SYMDEBB.EXE.  Then,
+     I created a file called SYMDEB.BAT, and I put the command
+
+          njpl -t symdebb.exe "%1 %2 %3 %4 %5 %6 %7 %8 %9"
+
+     into it.  In this way, I can use the SYMDEB.BAT file in the same
+     way I used SYMDEB.EXE, but I'll have the program logging of
+     NJPL.
+
+     This alternative works for most programs.  However, sometimes it
+     doesn't.  The AutoCAD program, for example, requires several
+     overlays.  If you change the name of ACAD.EXE to something else,
+     the program will give an error message stating that it can't
+     find the ACAD.EXE file.  ProComm has a similar problem, but
+     it won't give an error; it will simply crash.
+
+     The only way around this, unfortunately, is to create a .BAT
+     file with a slightly different name than the program file.  For
+     example, to solve my problem with AutoCAD, I created a file
+     called ACADD.BAT.  Typing the extra 'D' isn't very time
+     consuming, and is relatively easy to remember.
+
+     The last problem that NJPL can cause  involves memory.  Every
+     program, and every bit of data, takes up space.  There's no way
+     around it.  The NJPL.PLF and the SYSUSAGE.PLF files that NJPL
+     creates can get very large; to the point of overcrowding your
+     disk, if you're not careful.  I reccomend printing out and
+     deleteing the files, but you can also move them "offline" by
+     copying them to an archival floppy for later reference.
+
+     Whenever you delete the .PLF files that NJPL uses, NJPL will
+     create them again.  So, resetting the system after you reclaim
+     the space is very easy.
+
+     When NJPL runs "around" another program, it takes about 35k of
+     memory.  This may seem rather large, but NJPL is very optimized.
+     Some day, I may be ambitious enough to write a version in
+     assembly language, and that project will depend on the amount of
+     revenue that NJPL generates in its current form.  However, this
+     amount of memory is as small as possible, and there's not much
+     that can be done about it.  If you can't load NJPL around a
+     program that you wish to time, there's not much that can be
+     done.
+
+
+About This Program
+----- ---- -------
+
+     I wrote this program so I could safely declare my new computer a
+     tax writeoff.  I was also interested in how many hours per day
+     were spent by my computer doing its various tasks.  Many
+     professional people will probably find this program useful.  If
+     you do, I'd like to ask that you register your copy of the
+     program.  To do so, simply send me a check for whatever the
+     program is worth.  I'm "suggesting" that you send $15, because
+     that's what *I* feel the program is worth, based upon how much
+     time I spent writing, testing, and researching it.
+
+     If you have questions or comments about the program, even if
+     they're technical, please feel free to write.  If there's some
+     part of the program's sourcecode or the program's operation you
+     don't understand, I would welcome a letter.
+
+     Send your checks, questions, and comments to:
+
+             Mike Blaszczak
+             112 Verlinden Drive
+             Monroeville, PA  15146-2041
+
+     I hope that you enjoy Nifty James' Famous Program Logger!
+
+
+

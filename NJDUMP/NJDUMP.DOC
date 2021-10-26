@@ -1,0 +1,70 @@
+
+
+
+Nifty James' Famous Object File Dumper
+
+Version 0.50
+
+
+
+
+This program is designed to list the format and output of .OBJ and
+.LIB files.  The program takes the file as its input, and prints its
+descriptive output to the standard output device.
+
+The program follows the .OBJ standards set forth by Intel in the
+document "8086 Relocatable Object Module Formats".  The .OBJ and .LIB
+file formats are described in great detail in this text.  It can be
+ordered for about $15 from
+
+     Intel Literature Sales
+     PO Box 58130
+     Santa Clara, CA  95052-8130
+
+The book's order number is 121748-001.
+
+One type of record that is found in .OBJ files is defined by
+Microsoft.  This is record type 0xB0.  The record seems to have
+something to do with the data used by the Codeview debugger, but it's
+hard to tell for sure.  I've written Microsoft about this, and, to
+date, I've received no response from them.
+
+I originally intended this program to be a very complete OBJ file
+lister.  However, it seems that this is really a pretty considerable
+task.  The program, in its current state, will read and print some of
+the information in .LIB files, but the .LIB file format that MS-DOS
+machines use is not compatible with what's in the Intel
+specification.  I've had a hard time finding information on the
+Microsoft .LIB format, so I guess it'll go unsupported.
+
+These are the record types that are currently supported
+
+        LHEADR     THEADR     REDATA     LEDATA     LNAMES
+        PUBDEF     COMENT     FIXUPP     EXTDEF     MODEND
+        GRPDEF     SEGDEF     ENDREC     LINNUM
+
+If there are any registrations (at all) for the program, I'll
+continue to develop it and debug it.  I'm interested in hearing about
+any bugs!
+
+This program is a work of shareware.  If you find it useful, please
+send a $10 to register your copy.  If you'd like to send more or less,
+please feel free to do so.  If you do not find this program useful, I
+hope that you at least learn something from the sourcecode.
+
+REDISTRIBUTING THIS PROGRAM FOR PROFIT IS NOT PERMITTED WITHOUT THE
+PRIOR WRITTEN CONSENT OF THE PROGRAM AUTHOR.  REDISTRIBUTING THIS
+SOFTWARE WITHOUT THE AUTHORS KNOWLEDGE IS A CRIME.
+
+If have not described the .OBJ or .LIB formats in this text.  The
+best source for information on that is the Intel manual, mentioned
+above.  If you have any questions about the files, I'll be happy to
+answer them if you send them in a letter with return postage.
+
+Thank you!
+
+Mike Blaszczak
+112 Verlinden Drive
+Monroeville, PA  15146-2041
+
+

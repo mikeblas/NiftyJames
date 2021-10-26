@@ -1,0 +1,72 @@
+
+
+
+Nifty James' Famous EMS RAM Tester
+
+Version 1.00 of 21 October 1987
+
+
+   This program is designed to test the EMS or EEMS memory upon
+   the startup of your computer system.  The program is styled
+   as a device driver, so that it can get at the EMS memory
+   before any other device drivers (such as NJRAMD).
+
+   The program is installed by inserting the line
+
+        DEVICE=NJRAMT.SYS
+
+   *immediately* after the CONFIG command that installs the EMS
+   driver.
+
+   This program *must* execute before any other EMS programs, as
+   it requires access to *all* of the EMS memory.  It takes no
+   DOS memory, or EMS memory, after it has run, however.
+
+   The program works by filling each EMS page with four
+   different patterns.  The program checks to see if each of the
+   patterns are stored correctly.
+
+   A progress display is maintained on the screen while the
+   program is running.  It shows
+
+       Page       1 tested
+
+   for each page tested.  If the program encounters an error
+   during testing, the program will display
+
+       Error on page     1!
+
+   to indicate that an error occurred.
+
+   The EMM memory manager program tests the memory to a very
+   limited extent.  NJRAMT is designed for people who would like
+   the piece of mind that an additional, more extensive test,
+   provides.
+
+   The program tests the memory rather quickly.  However, if you
+   find that you're impatient, and would like to abort the test,
+   simply strike any key.  The program will abort, and "fall
+   through" to the next command in your CONFIG.SYS file.
+
+   This is a work of shareware.  RESELLING THIS PROGRAM WITHOUT
+   THE PRIOR WRITTEN CONSENT OF THE AUTHOR IS PROHIBITED.
+   SELLING THIS PROGRAM WITHOUT THE AUTHORS KNOWLEDGE IS A
+   CRIME.
+
+   I'd like to receive a registration of $5.  However, if you
+   find the program of more or less value, please feel free to
+   send more or less of a registration fee.
+
+   The file NJRAMTXP.SYS is a special version of the program for
+   users with V-20, V-30, 80286 or 80386 CPUs in their
+   computers.  This version works *slightly* faster.
+
+   If you have any questions about the program, or would just
+   like to talk, please feel free to send me a letter.  I love
+   to hear from anyone.
+
+
+        Mike Blaszczak
+        112 Verlinden Drive
+        Monroeville,  PA  15146-2041
+

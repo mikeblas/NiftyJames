@@ -1,0 +1,16 @@
+#
+# MAKE file for optimized version of NJSORT
+# (C) Copyright 1988 by Mike Blaszczak
+# Version 1.00 of 08 May 1988
+#
+
+njsort.obj	:	njsort.c
+	cl -c -W3 -Ox -AC njsort.c
+
+compares.obj	:	compares.asm
+	masm /Ml /W2 compares;
+
+njsort.exe	:	njsort.obj compares.obj
+	link njsort+compares,/noe /noi /exepack;
+
+

@@ -1,0 +1,385 @@
+
+Technical Information
+--------- -----------
+
+If you've had your EPSON graphics printer for any amount of time, you know
+that it can do graphics.  Get it?  *Graphics* Printer, it can do graphics.
+Now, "graphics" may not be all it's cracked up to be.  Graphics doesn't
+necessarily mean pretty pictures, or reprints digitized from last month's
+Penthouse.
+
+NJLQP uses the graphics mode of your printer to print an enhanced character
+set.  Basically, NJLQP gets the file it is to print.  It gets a character,
+looks it up in a table of graphics information, and prints it out.  The data
+in the table defines the way each character should look.  I wrote the data
+table to mimic the IBM character set, with smoother lines and more obvious
+serifs.  Of course, the font is about 16 x 12, so it is much smoother than
+the regular print modes.
+
+So, get your NJLQP.ASM file out, and I'll lead you through it step by step.
+I'm gonna assume you know assembly language.  I'm not going to tutor you in
+.ASM.  I am just explaining the workings of my program so others can see
+what makes it tick.
+
+Firstoff, 'course, is the comments.  Just a quick list of revisions and
+stuff, things that are also presented here.  Takes up about a page.
+
+Then, right where it says "Here's the serious stuff--" things get
+interesting.  The radix command sets everything to default to base ten,
+decimal.  The "if1...endif" construct I have there is just for me to watch
+the assembly, so I know when pass one and two of the assembler begin and
+end.  The next bunch of things are all equates; things I've redefined back
+into English so they're easier to follow.
+
+The first group contains common ASCII codes.  The next group is the list of
+DOS function calls that are used.  The next group, a small one, are the
+errors that will be returned through ERRORLEVEL if a problem causes the
+program to terminate.
+
+MaxArgs, Opts, and Files are equates used during the parsing of the command
+line.  If any of these values are exceeded, than the user has given us an
+inproper command line, and the USAGE display is given.  MaxArgs is the
+maximum number of total arguments, Opts is the max number of options, and
+Files is the max number of files.  Of course, MaxArgs == Opts + Files.
+
+The public definitions are there for the debugging of the code.  While I was
+troubleshooting and optimizing the code, they let the linker and SYMDEB know
+what I was looking for and at.  Still, nothing too crucial.
+
+Well, CSEG SEGMENT PARA PUBLIC 'CODE'.  The most common statement in machine
+language, next to XOR AX,AX and INT 21H.  We then tell the linker what we
+want in the segment registers.
+
+The first data label is defined at 0006h in the program's segment.  This is
+a word value set in the PSP that indicates how many bytes are available in
+our code segment.  NJLQP will use all the memory it can for its buffer.
+
+CMDLen is the length of the arguments on the command line, in characters.
+The command line itself starts at 0081h. Of course, NJLQP is a .COM file,
+and we use ORG 100h to start the program at offset CS:0100.
+
+The first instruction jumps around the stored data to the label GENESIS,
+which is where execution *really* begins; this is so the program can start
+at 100, and not execute the data.
+
+
+The .XLIST directive turns of source code listing during assembly.  The next
+line, INCLUDE EPSCHR1.INC, gets information from EPSCHR1.INC.  This file
+contains the actual character definitions.  The next line, .LIST, turns
+source code listing back on.  If you're interested in EPSCHR1.INC, TYPE it
+from DOS.  The comment block at its beginning does a good job of describing
+it.  It contains an equate and a label that calculate the width of half
+the character, and the width of the entire character.  These are used back
+in the main program.
+
+LinePos is a byte that holds the length of the first line.  It will range
+from 0 to 80.
+
+Phase is a counter used during the actual print routine; it counts from zero
+to one, to remind the program of which pass it is making with the printhead.
+
+FileNotOver is another byte-sized flag that is set to true when the file
+isn't over.  It is set to zero when the file has ended, and no more
+characters are in it.
+
+BufferSize holds the maximum number of characters that may be contained in
+the ReadBuffer area.  BuffPos is the "cursor" for ReadBuffer; it points to
+the next character that will be read.  CharsInBuff is a count of unread
+characters that are still in the buffer.
+
+Banner is a the text that is printed when the program starts up; it notifies
+the user of the version number and the printer that this version was written
+for.  BannerLen is an equate that will be set by the assembler to the number
+of characters in Banner.  This method is used for all the text areas in the
+program.
+
+Usage is the text area that contains the usage display, which is printed
+whenever the user makes an error on the command line, or specifies no
+arguments at all.
+
+FF1M is a message that says that NJLQP is printing the formfeed after the
+file.  NoSkipMsg and SkipMsg are messages that say whether or not we will be
+skipping over the perforations or not.
+
+NotOpen is an error message that tells the user that the file requested to
+print was not found, or couldn't be opened.  TooFull is a message that is
+printed when the output device overflows.  This only happens when the
+printed output is redirected to a disk file.
+
+Success is the message that is printed when the program ends.  SlashN, from
+the "C" convention '\n', is the newline sequence, CRLF.  AbortM is a message
+printed when the user uses ESC to quit printing.
+
+LeadIn is the sequence sent to the printer to initiate graphics mode.
+Spacing is the printer sequence to set the line spacing length.  SkipOn and
+SkipOff are the printer commands to turn the skip over perforation setting
+on and off.
+
+DotCount is a word used by the printing routine to count how many bytes of
+eight vertical dots must be sent to the printer.  Status is the status of
+the last executed call to GETLINE.  The valid values for it are contained in
+the Equates area.
+
+Infile and outfile are storage areas for the file handles used for input and
+output.  OutError is a flag that is set if the output file should be erased
+before the program ends.  OutFileName is a pointer to the command line that
+points to the name of the output file, terminated by a byte of zero.
+
+LineAddr is a temporary pointer for the printing routine.  Rings is a
+counter for the printing routine, which counts how many bells must be sent
+after this line is printed.
+
+OneBuff is a single character buffer used by the "send one character"
+routines.
+
+Args is an array that points to each individual argument in the command
+line.  POption, FOption, and EOption are flags for the various options that
+the program may be run with.
+
+Genesis is a label that finally marks the beginning of executable code.
+The first thing done is calculation of the ReadBuffer size.
+
+Then, the registers are loaded with pointers to the Args array and the
+command line.  The count of allowable arguments is also loaded.
+
+EatWhite marks the a loop that "eats up" the white space, such as spaces and
+tab characters, from the command line.  LODSB loads the character pointed to
+by SI into AL, and then increments the SI register, which points to our
+current spot in the command line.
+
+First, we check to see if AL is a carriage return.  If it is, this means
+that we have looked at all the characters in the line, and are done parsing.
+If such is the case, we go to the DoneParsin label.  (Try to read my labels
+with a Southern Accent <grin>).
+
+If it AL contains a space or a tab, then we loop back to EatWhite to see if
+we can find some more white space to eat.  Otherwise, we flow through.  The
+first character of an argument will be in AL.  We will decrement the
+count of arguments.  If the argument count has turned negative, we have
+found at least one to many arguments; thus, we will go to ShowUsage, to show
+the USAGE display, set ERRORLEVEL, and exit.
+
+Otherwise, we stow a pointer to the argument in the ARGS array.  Due to the
+way the loops are set up, and the usage of the LODSB instruction, we must
+decrement the value stored in the ARGS array to make it correct.
+
+Now, we flow through to EatG2.  We then "eat" through the argument until we
+find some more white space or a carriage return.  If we find a space or a
+tab, we replace it with a zero, and then loop back to EatWhite.  If we find
+a carriage return, we replace it, too, with a zero, and then flow through to
+DoneParsin.
+
+At DoneParsin, we figure out how many arguments we have.  If we have none,
+then we tell the user that he doesn't know what he's doing, by showing him
+the USAGE screen.  Otherwise, everything was properly parsed, and we'll show
+him the Banner, which just says who we are and which version we are.  We
+then jump around the show usage and exit routines.
+
+ShowUsage and Exit are here, so they can be easily branched to.  ShowUsage
+simply prints the usage message, and sets ERRORLEVEL to the usage error
+number.  It then falls through to Exit.
+
+Exit checks the "OutError", which will be set if the output file must be
+deleted.  If it is set, we delete the output file, if it isn't a device (of
+course, because you can't erase the printer!).  Then, we call the Terminate
+function in DOS, and we're done.
+
+OverShow marks the end of the Show and Exit areas.
+
+First, we get a pointer to the ARGS array.  Then at Oomlat (okay, read them
+with a German accent now!), we decrement the "found arguments" counter,
+which is held in DX.  If the result is negative, we're done, and we'll go to
+Prelims.
+
+We'll get the pointer to this argument into the DI, and increment the
+pointer to the array of pointers (You C programmers should understand this;
+you Pascal programmers can grasp it if you think for a little bit.  BASIC
+programmers out there are probably saying "What?", and other Assemblists are
+probably wondering why I took the wrong way 'round (grin!)).
+
+We then get the first two characters of the current argument from the
+command line.  If the first character, which will be in AL, is a dash.  If
+it is, we're looking at an argument.  If it isn't, we go to GotAFile,
+because we should be looking at a file's name.  Deductive logic.
+
+Since AH will have the character following the dash, we will make it into an
+uppercase character by clearing bit five.  We'll see if it is a "P"; if it
+isn't, we go to NotPOpt.  If it is, we toggle the POption flag, and then go
+back to Oomlat.
+
+At NotPOpt, we check for and handle the E option.  If we don't have an E,
+then we go to NotFOpt.  There, we see if we have an "F", and we'll handle it
+if it is there.  If not, we'll show the usage screen.
+
+At GotAFile, we check to see which files we already have.  If we already
+have both the input and the output file, we exit through showusage.  If not,
+we open the first file for input, and the second file for output.
+
+If the file is opened and there is an error, we'll complain about a
+FileError by printing the message and then exiting.  If the file is opened
+successfully, we store its file handle into InFile or OutFile, respectively,
+so it can be used later.
+
+At Prelims, we check the OutFile variable.  If nothing was stored there,
+there was no output file specified; therefore, we'll send things to the
+standard printer device (PRN).
+
+TellPerf checks the P option's flag.  It will print either "Not skipping
+over perforations" or "Skipping over perforations", just so the user knows
+what's going on.
+
+If the file is to be sent to disk, we tell DOS that it is a binary file.
+This is because the end-of-file character, 01Ah (control-z) can't be
+written to an ASCII file without causing problems.  Special thanks are in
+order to Mike Quinlan for helping me figure this out!
+
+CheckedOut looks at the skip over perf flag.  It then sends the proper code
+to the printer to reset or set that feature.
+
+MainLoop is the program's main loop.  Obvously.
+
+We check the keyboard, via DOS, to see if the ESC key has been pressed.  If
+it has, we'll exit, since that's what the user wants us to do.  Otherwise,
+we go to NoKeyP.
+
+We call the getline procedure, and then call checkwhite.  Getline, in a
+nutshell, gets a line from the input file.  CheckWhite looks at that line to
+see if it is entirely whitespace, or to trim off trailing whitespace from
+the line.
+
+PostGetLine is just a debugging label, so I could stop the program there and
+see what happened.  If the line is totally blank, we'll skip over all the
+other stuff.  Otherwise, we'll place a call to PrintLine, which does the
+actual letter quality printing.
+
+Upon return from PrintLine, we check the echo option, and, if it's on, we'll
+echo the line to stdout.  If the two line flag is set, we will print the
+second line, too.
+
+We then reset the spacing size, and then print a new line.
+
+GetLine sets flags in a place called Status.  We look at that to see what we
+have to do.  If we need to print a formfeed, we'll do so.  If there's no
+other flags set, we'll go to MainLoop, and do it again.
+
+If the file is over, we'll look at the F option.  If it is set, we will
+print a formfeed after the file, and also print a message to that effect.
+We then print a success message. We close the files we used, because DOS
+automatically does this for us when we exit through function 4Ch.
+
+So, now, all's left to describe are the subroutines.  This program has some
+workhorse subroutines, that do more processing than the rest of the code,
+like PrintLine and GetLine.  Then, there are the diddlies, like LNewLine and
+SNewLine.  There are also the utilitarian subroutines; they are not very
+complex, but handle many calls during the program... ie, Show or PutPrint.
+
+Firstoff, and, most simply, there's SHOW.  Show is a near procedure that
+prints a block of data to STDOUT via the DOS "Write to a File Handle" call.
+Show is called with DS:DX pointing to the block to print, and CX containing
+the number of characters that are in the block.  It calls DOS to print the
+data, and returns.
+
+Then, there's SNewLine and LNewLine.  They print a newline sequence (CR and
+LF) to the Standard output and to the output file, respectively.  SNewLine
+points to the StrokeN label in the data area, and then calls Show.  LNewLine
+does the same, except it sends the data to the handle in the OUTFILE
+variable.
+
+CheckWhite is a subroutine that trims the input line.  If the input line
+contains only spaces, or contains spaces at the end of the line, CheckWhite
+trims them off.  This saves a great amount printing time.
+
+PrintLine is the workhorse procedure.  It is called with the offset to the
+line to be printed in DX, and the number of charcaters to print in CX.
+First, it takes care of getting its addressing set up.  Then, it computes
+how many dots must be sent to the printer to print the line.  This
+information is used in the next step, where the graphics mode of the printer
+is set up.
+
+The main loop of this subroutine starts at PLineC.  Here, we get the next
+character.  If it is a bell, we increment the RINGS variable, and change the
+character to be printed to a null.
+
+At NotBeep, we look up the character to be printed in the font table.
+First, we get the offset of the table.  If this is the second phase, we add
+a little to the offset so we will be pointing to the phase two data.  We
+then multiply the character by the number of data bytes in each entry, and
+add that number to the offset.  Now, the offset correctly points to the
+data.  We call the PutPrint subroutine to print this information for us.  We
+increment the pointer to the line buffer, and decrement the character count.
+If we are not done, we'll look back to PLineC to get the next character.
+
+Otherwise, we'll increment the phase count.  If it's the end of the first
+phase, we will set the line spacing to 3/216 of an inch, and print a
+newline.  Then, we'll loop back to print the phase two data.
+
+If it's the end of phase two, we'll print all the bell characters.  We
+simply get the number of bells from Rings, and loop to print that many
+bells.
+
+PrtOne is a short routine that simply prints one character, in the AL
+register when PrtOne is called, to the file handle in the OutFile variable.
+
+PutPrint is another subroutine that handles output to the OutFile handle.
+It is called with a pointer in DX and a character count in CX.  It writes
+the characters at [DX] using the DOS Write-to-Handle function call.  This
+subroutine contains a special label, PPFull.  If there is an output error at
+any time, control passes to this label.  It prints an error message, deletes
+the output file, and terminates the program.  This label is referenced in
+PrtOne, LNewLine, and in PutPrint itself.
+
+GetLine is another of the workhorse subroutines, and the last left to
+describe.  It gets an input line from the file handle stored in InFile.
+First, it clears the direction flag, and puts a pointer to the line buffer
+in DI.  it then zeros the cursor position in the line buffer.
+
+GetC marks the code that gets the next character from the buffer.  It checks
+the CharsInBuff variable, which holds the count of characters still unread
+in the buffer.  It it is not zero, a branch is made to JustGet.  Otherwise,
+a DOS call is made to read another block from the file.  If DOS returns more
+characters, we simply zero the cursor and continue.  Otherwise, we set the
+FileOver bit in the Status variable, and return to the calling routine.
+
+JustGet is where the read takes place.  The address of the next character is
+calculated in SI, the character is fetched.  The cursor is moved to the next
+character in the buffer, and the CharsInBuff variable is decremented.  If
+the character is a line feed, we go back to GetC, since we have no use for
+line feeds.
+
+If the character has an ASCII code less than 32 (020h), it is a control
+character, and requires special handling; we branch to the label Control to
+do this.  Otherwise, we flow through to CPut, which stores the character,
+and increments the length of the line.  If the line is eighty characters
+long, we "insert" a carriage return, and return to the caller.  We check to
+see if the file is over, and, if it isn't, we go back to GetC to get the
+next character.  If the file is over, we set the fileover bit in the Status
+byte, and return.
+
+Control looks for, and handles, special control characters.  Backspaces in
+the input delete the previous character, but will not send the cursor past
+the left margin.  Carriage returns end the line, and, since they mark the
+end of a line, they cause the GetLine procedure to return.  The next is
+for a form feed.  If a form feed is found, a carriage return is inserted,
+and the formfeed bit is set in the Status byte, and the subroutine
+terminates.
+
+If a tab is encountered, it is expanded by stuffing spaces into the buffer
+until the position of the cursor is divisible by eight.  This occurs at the
+label TabExpand.
+
+If the control character is not a special case, it is simply put into the
+line buffer, and is treated as just another character.
+
+GetLine was by far the most difficult routine to write.  Properly handling
+the different possibilities that may occur required a good deal of planning
+and a little bit of fancy programming.  Making sure the program was not
+bothered by files that end without newlines, lines that end in special
+characters, etc, was very challenging.
+
+That's all for the description of the programs workings.  If you've got a
+specific question about anything inside, please feel welcomed to write to
+me.  My addresses and ID's are in the .DOC file!
+
+Nifty James.
+
+

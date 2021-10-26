@@ -1,0 +1,127 @@
+Nifty James' Famous Program Log System
+
+Release Bulletin
+December sixth, 1987
+
+
+Often in the computer-related professions, it is desirable
+to be able to record the usage of certain programs or work on a
+certain task.  This might be a requirement for professional billing
+or for tax purposes.
+
+Nifty James' Program Log System is a program that accomplishes this
+often tedious task.  It consists of two programs that maintain a log
+of program activity.
+
+The first program, NJPL, is the program that acutally does the
+logging.  It conveniently installs "around" another program to time
+and record its execution.
+
+For example, if you normally edit a document with
+
+      EDWIN MYBOOK
+
+NJLP would do the same task with
+
+      NJPL EDWIN "MYBOOK"
+
+First, DOS loads NJPL.  NJPL does its housekeeping work, and then
+loads EDWIN.  EDWIN receives its regular command line from NJPL, and
+begins execution as usual.  When EDWIN terminates, it returns control
+to NJPL.  NJPL notes the time that EDWIN took to run, and stores it
+in a file.
+
+This simple usage allows NJPL  to be installed quickly and
+conveniently around any program, from 1-2-3 to the Microsoft Macro
+Assembler, to monitor its usage.  It's easily incorporated into
+already written batch files, and can even be conveniently used in the
+program maintenance description files that are used by MAKE.
+
+The other half of the program is NJPR.  This is the report generator
+that converts NJPL's record information into useful, managable
+information.
+
+NJPR can produce four kinds of reports:
+
+            o       Daily Program Usage
+            o       Total Program Usage
+            o       Daily Task Usage
+            o       Total Task Usage
+
+The Daily Program Usage report lists each program's usage day by day.
+An entry in this report might look like this:
+
+     For 8 November, 1987:
+             edwinn   was run 12 times and was active for 1:55:03.54 (32.055%)
+             link     was run 5 times and was active for 0:00:50.36 (0.234%)
+             lsedd    was run 13 times and was active for 0:29:37.85 (8.255%)
+             msc      was run 45 times and was active for 0:39:35.55 (11.030%)
+             nethack  was run 9 times and was active for 0:39:14.94 (10.934%)
+             procomm  was run 5 times and was active for 2:14:34.59 (37.492%)
+             total usage: 5:58:56.87
+
+This clearly shows how many times each program was run that day.
+NJPR also shows how long each program was active, and for what
+percentage of the tallied time it was active.  The program also
+gives the total tallied program usage for that day.
+
+The total program usage report shows similar information, but for the
+entire report period:
+
+Total program usage:
+        cl was executed 124 times for 1:23:10.81, or 0.927% of total usage
+        counter was executed 9 times for 0:01:38.12, or 0.018% of total usage
+        edwinn was executed 244 times for 24:22:35.17, or 16.292% of total
+               usage
+        exemodd was executed 21 times for 0:00:20.32, or 0.004% of total usage
+        linesin was executed 8 times for 0:00:11.59, or 0.002% of total usage
+        linesin2 was executed 3 times for 0:00:03.36, or 0.001% of total usage
+        link was executed 223 times for 0:53:08.28, or 0.592% of total usage
+        lsedd was executed 536 times for 23:43:03.97, or 15.851% of total
+               usage
+        masm was executed 5 times for 0:01:45.01, or 0.019% of total usage
+        msc was executed 441 times for 4:48:17.83, or 3.211% of total usage
+        nethack was executed 45 times for 2:40:28.78, or 1.788% of total usage
+        procomm was executed 160 times for 91:06:22.21, or 60.889% of total
+               usage
+        symdeb was executed 20 times for 0:32:52.48, or 0.366% of total usage
+        symdebb was executed 5 times for 0:02:57.34, or 0.033% of total usage
+
+        Total time 149:37:35.47
+        Report starts on November 6, 1987 and ends on December 5, 1987
+
+The Task Usage reports provide information in similar formats.  However,
+instead of breaking down each entry by the program name, the reports
+list information indexed by the program and the first ten characters
+of the command line.
+
+This is useful when you a program for several purposes.  For example,
+the EDWIN editor can be used to edit any file.  At one time, you
+may be using it to edit a letter to your mother, while at another
+time you may be using it to edit a program that you are writing.
+
+Since NJPR can generate reports that pay attention to the command
+line that you used, you can tell the difference between two different
+applications of one program.
+
+NJPR's reports are formatted to be easily printed for record keeping.
+The datafile that NJPL uses can easily be imported to databases and
+spreadsheets like 1-2-3 or dBase III.
+
+
+The NJPL system is a Shareware effort from Mike "Nifty James"
+Blaszczak, an experienced Shareware author.  The system will be
+available in the IBMSIG File Library, and directly from the author.
+
+The requested registration fee for the system is $15.  You can
+purchase a pre-registered version from the author for $20.
+
+Questions may be mailed to the address below, or sent online to the
+name NIFTY JAMES on this system.
+
+
+Mike Blaszczak
+112 Verlinden Drive
+Monroeville, PA  15146-2041
+.send
+

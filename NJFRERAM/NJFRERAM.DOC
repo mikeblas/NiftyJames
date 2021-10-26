@@ -1,0 +1,172 @@
+
+
+NJFRERAM
+
+Nifty James' Famous Free Memory Display Program
+
+Version 1.12  of  06 May 1987
+Version 1.13  of  07 May 1987
+Version 2.00  of  19 May 1987
+
+Copyright 1987 by Mike Blaszczak
+All rights reserved
+
+
+Instructions
+------------
+
+     NJFRERAM is a short, terminate-and-stay-resident utility.
+     It remains in memory, and allows the user to maintain a
+     display of free user memory in the upper right corner of
+     the screen.
+
+     NJFRERAM is installed in memory simply by typing NJFRERAM.
+     The program will run and load itself into memory; it takes
+     about ~1300 bytes of memory.
+
+     NJFRERAM is activated and deactivated by pressing the <Alt>
+     and <RightShift> keys simultaneously; that is, depress the
+     <Alt> key, depress the <RightShift> key, release the
+     <RightShift> key, and then release the <Alt> key.  This key
+     combination is used to keep conflicts to a minimum -- I
+     know of no other programs that use the <Alt>+<RightShift>
+|    key combination.  (And, if you do use a program that makes
+|    use of <Alt>+<RightShift>, you can use NJFRE2.COM, also
+|    included in this archive.  It's the exact same program,
+|    except it watches for <Alt>+<LeftShift>.
+
+|    Once NJFRERAM's display has been activated, NJFRERAM will
+|    update the display of free memory at the top right corner
+|    of the screen every second.  From Version 2.00 up, NJFRERAM
+|    is also capable of displaying the amount of memory
+|    available on the popular "EMS" or "EEMS" cards.  NJFRERAM
+|    will work on either the "EMS" cards, from Intel, or the
+|    "EEMS" cards, from AST Research.  If you have an E/EMS
+|    card, pressing <Alt>+<RightShift> a second time, after the
+|    program has been activated, will display the amount of
+|    memory not in use on the card.  This number is only
+|    accurate to 16 kilobytes (that is, 16368 bytes), since that
+|    is the size of the memory blocks that the E/EMS driver
+|    software allocates.
+
+|    If you don't have an E/EMS card, pressing
+|    <Alt>+<RightShift> again will turn off the display.  If you
+|    have an E/EMS card, pressing the keys while the E/EMS free
+|    display is up will turn off the display.
+
+     Once the display is off, you can again press the keys to
+     turn it back on.
+
+     I've tested this program heavily, using the various
+     programs that I use from day to day.  The program is
+     compatible with every piece of software that I use
+     regularly.  However, if you find a program that doesn't get
+     along with NJFRERAM, please let me know.  If it is
+     possible, I will try to update the program to keep it
+     working in as many environments as possible.
+
+|    It has been brought to my attention, however, that NJFRERAM
+|    is *not* compatible with Instant Recall.
+
+     Also, please note that NJFRERAM only monitors the memory
+     "seen" by DOS.  If you have Intel's EMS or AST's EEMS
+     memory in your computer, its presence will not be
+     refelected by the display that NJFRERAM generates.
+
+
+     Kudos
+     -----
+
+     This program was an idea of RAY M, one of the other users
+     of the IBMSIG on The SOURCE.  Ray is a great guy, and gave
+     me the idea to write this useful little utility.
+
+     Special thanks to DR FILE FINDER and BOB BRODY.  Without
+     their support, Version 2.00 wouldn't be a reality!
+
+     Also, great thanks to the people in my "marketing
+     department", who helped me decide on a name for the
+     program.
+
+
+     Points of Interest
+     ------ -- --------
+
+     The first thing that you'll probably notice when you
+     install and run NJFRERAM is that it shows you have 48 bytes
+     of memory free.  This is memory that DOS leaves 'lying
+     around', for its on use.  When a COM or EXE program is run,
+     DOS automatically allocates all of the available memory to
+     the program, leaving only these 48 bytes.
+
+     For some reason, when DOS is sitting at the command prompt,
+     these 48 bytes are also only marked free.  You do indeed
+     have more free memory than this.  Strangely, if you type
+     the command   EXIT   at the DOS prompt, DOS will release
+     that memory, and the real amount of memory avaialble will
+     be apparent to NJFRERAM.  (At least, that's the way it is
+     under DOS 3.10, my operating system of choice.)
+
+     Also, due to the way that some programs run, the NJFRERAM
+     display will be stuck at 48 bytes.  This is not a problem
+     with NJFRERAM; this is actually the amount of memory that
+     DOS 'sees'; remember that it allocated all the free memory
+     to the program that was running.  Generally, I've found
+     that programs that were written in C, and some programs
+     that were written in Assembly Langauge, will allow NJFRERAM
+     to show the proper amount of free memory.  More information
+     relating to this 'phenomena' can be found in the book "The
+     Developer's Guide To MS-DOS", on pages 80-95.  The book is
+     published by the Waite Group... it's well worth the
+     investment to most programmers.
+
+     I've worked with several programs, and it seems that EDWIN,
+     the popular user-supported editor, is one of the programs
+     that does not allow NJFRERAM to display the correct amount
+     of memory.  However, EDWIN does have a command to show the
+     free memory.  The program works properly with my other
+     editor, The Lattice Screen Editor, which was written in C.
+
+|    I've come to another interesting find.  In the DOS
+|    Technical Reference Manual, IBM instructs programmers to
+|    free a TSR programs' Program Segment Prefix area.  This
+|    usually frees betwee 48 and 480 bytes of memory.  In
+|    theory.  Actually, no memory is freed up.  Since this
+|    memory is lying around inbetween two allocated blocks, DOS
+|    will not use it.  So, the amount of free memory that you
+|    see at the DOS prompt is not always 48 bytes; sometimes
+|    it is zero, sometimes is over 1k.  But, the value will
+|    never be correct until you type the EXIT command.
+
+     Shareware
+     ---------
+
+     If you find this program useful, please send a small
+     contribution.  $7 or $10 is very adequate.  You'll sleep at
+     night knowing that you helped an aspiring young programmer!
+
+     Thank you very much!
+
+     Don't rip off shareware authors.  Please send a donation if
+|    you use this program.  I noticed that this program was
+|    downloaded from the IBMSW forum on CompuServe more than 150
+|    times in three days.  Obviously, this program is *very*
+|    popular.  But, as of today, I have received no
+|    contributions for it.  That's quite disappointing.  If I
+|    had received controbutions from only 10% of the people, I
+|    would be $100 to $150 richer, and I wouldn't be
+|    complaining.  Come now, if you use it, contribute!
+
+
+Mike "Nifty James" Blaszczak
+112 Verlinden Drive
+Monroeville,  PA   15146-2041
+
+Participate On The Source:  NIFTY JAMES
+Participate On NWI       :  MIKE B  or NIFTY JAMES
+The KCA PC-Guru BBS, in Pittsburgh:  MIKE BLAZAK
+On The SOURCE:  BCB922
+On CompuServe:  76210,1546
+
+
+

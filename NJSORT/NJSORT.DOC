@@ -1,0 +1,389 @@
+
+
+Nifty James' Famous Sort Tool
+Version 1.00 of 08 May 1988
+Version 1.05 of 19 May 1988
+Version 1.10 of 03 July 1988
+Version 1.11 of 30 October 1988
+
+(C) Copyright 1988 by Mike "Nifty James" Blaszczak
+
+
+
+REDISTRIBUTION OF THIS PROGRAM WITHOUT THE PRIOR WRITTEN CONSENT OF
+THE AUTHOR IS STRICTLY PROHIBITED.  THIS PROGRAM MAY NOT BE RESOLD OR
+OFFERED AS INSENTIVE FOR PURCHASE WITHOUT THE AUTHOR'S KNOWLEDGE.
+THE AUTHOR IS NOT RESPONSIBLE FOR DAMAGES, DIRECT OR CONSEQUENTIAL,
+CAUSED BY THE APPLICATION OR MISAPPLICATION OF THIS PROGRAM.
+
+
+
+It is very often necessary to sort information.  It makes the
+retrevial of information more rapid, and gives the data a more
+humanized look.  It also facilitates maintenance of lists.
+
+Thus, having a powerful sorting tool is essential to good
+productivity.  This program is capable of very large lists, and is
+limited only by the availability of storage space.  It runs very
+quickly, using optimized C code and hand-written assembly language
+for the more crucial routines.
+
+Using NJSORT is quite easy; it is run from the command line using a
+traditional syntax:
+
+	NJSORT <infilename> [<outfilename>] [<options>]
+
+<infilename> is the name of the input file -- the file to be sorted.
+It must be present.  If it is not, NJSORT will show its usage and
+syntax and terminate.
+
+<outfilename> specifies the name of the output file.  If this name is
+not present, NJSORT will write the sorted output to the same disk and
+directory as the input fille, but will change the extention to
+".BAK".  For this reason, you must specify an alternate output file
+name if you would like to use NJSORT to sort a file with the
+extention of ".BAK".
+
+<options> is a list of options.  These are the valid options:
+
+    /B	Strip blank lines from the input.  If a line is found to
+	have nothing on it, or only tabs and spaces on it, NJSORT
+	will remove it from the output file if this option is
+	specified.
+
+    /C	Case Insensitive sort.  This will tell NJSORT not to pay
+	attention to the case of the text it is sorting.  NJSORT
+	will consider "lowercase" equal to "LOWERCASE", for example.
+
+    /D	Remove duplicate lines.  This will cause NJSORT to remove
+	identical lines from the output.  If /C is specified, the
+	comparison for duplicate lines will not be case sensitive.
+	If /I is specified, the check for duplicate lines will not
+	pay attention to leading whitespace.
+
+    /I  Ignore leading whitespace.  This will cause NJSORT to ignore
+	the tabs or spaces at the beginning of a line.
+
+    /R  Sort in reverse order.  Normally, NJSORT sorts starting with
+	the lowest ASCII code and going up.  Thus, 'A' comes before
+	'Z'.  If this option is specified, NJSORT will sort starting
+	with the highest ASCII code and going down: 'Z' will come
+	before 'A'.
+
+    /V  Display sort statistics.  This verbose mode will display
+	information about the sorting process after it has completed.
+
+Normally, NJSORT sorts ASCII files by looking at each line as a
+separate item.  Often times, there may be more than one sort field on
+each line.  It may also be desirable to sort the text based on the
+content of a certain colum or field of data.
+
+To make use of this feature, these options may be used:
+
+   /F#	Specify the first key field number
+   /S#	Specify the second key field number
+   /T#	Specify the third key field number
+   /Q#	Specify the fourth key field number
+   /P#	Specify the fifth key field number
+   /M,	Specify field delimiter
+   /N 	Sort by columns and not fields
+
+These options define the fields to be used, and their respective
+"weight" in the sort.  When no fields are specified, NJSORT uses the
+entire line starting at the beginning as the sort key.
+
+When a key field is specified, NJSORT checks them in order.  If the
+first key field of two items are equal, then the second key field is
+checked.  If the second key field is equal, then the third is
+compared, and so on.  If all the specified key fields are equal, or
+there are no more key fields on the line, the items are assumed to be
+equal and their final order is arbitrary.
+
+Since I maintain a database of the records in my collection, I have
+an ASCII file with this format:
+
+   <artist>,<album>,<song>,<length>,<sidecut>,<copyright>
+
+A typical entry might look like this:
+
+   Pink Floyd,Dark Side of The Moon; The,Money,6:23,0201,73
+
+I can sort this database using the command
+
+   NJSORT MUSIC.DAT /F1 /S2 /T3 /Q5 /F6 /M, /C
+
+This uses the /C option to make the sort case insensitive; thus,
+"PINK FLOYD" will be equal to "Pink Floyd".  The program is told
+which keys to order the sort with, and it is told that the comma
+spearates the felds of data.
+
+Thus, when NJSORT sees the line in the file, it looks at it like
+this:
+
+   Pink Floyd,Dark Side of The Moon; The,Money,6:23,0201,73
+    Field 1  |   Field 2                |  3  |    |  4 |  5
+
+When it sorts the file, the list will be ordered  by the name of the
+artist.  "Pink Floyd" will come before "ZZ Top".  If NJSORT finds
+that the first field of two items are equal, it will check the second
+field.  "Dark Side of The Moon; The" comes before "Wall; The", even
+thoug they are both Pink Floyd albums.
+
+If the program finds that the album names in the second field are
+equal, it will check the third field,  which is the song title.  In
+the unlikely event  they are also equal, the program will also go on
+to check the side and cut of the song on the album, and finally the
+copyright date of the song.
+
+This allows you to sort with multiple keys on fields with variable
+length.  If the file, however, is listed in columns, for example:
+
+    Pink Floyd     Dark Side of The Moon; The   Money
+    Pink Floyd     Dark Side of The Moon; The   Eclipse
+    .
+    .
+    .
+
+NJSORT should be given the option /N, which tells the program to use
+the numbers provided ot the key field options as column numbers.  So,
+to sort the above file, one would use
+
+    NJSORT MUSIC.DAT /F1 /S16 /T45 /C /N
+
+NJSORT will reguard the field starting in the first colum as the
+first sort key.  The second key will start in column 16, and the
+third key starts in column 45.  To have NJSORT regard these numbers
+as column numbers, the /N option must be specified.
+
+With Version 1.10, NJSORT also has the ability to sort binary files
+that contain fixed-length records.  You can specify the offset of
+the sort keys in each record using the /F, /S, /T, /Q, and /P
+options, as normal.  You must also specify the /W option.  The /W
+option must be immediately followed by the number of bytes in each
+record of the input file.
+
+NJSORT will sort the records, and will write out a binary file of the
+same format -- just the records will be rearranged.  If NJSORT can't
+read a full record, it will stop and print an error message.
+
+Using NJSORT is as simple as that, even for all its power and
+versatility.
+
+NJSORT will read the datafile when it is invoked, and will then
+attempt to sort all the information in memory.  If the program cannot
+load the entire input file in one attempt, it will sort the contents
+of memory and write it to a temporary disk file.  It will then clear
+the memory, and read again.  Once all the input has been read, the
+program will then merge the temporary files into an output file.
+
+NJSORT will look for the environment variables NJTEMP, TEMP, and TMP
+to see if a path or drive for the temporary files was specified. The
+first variable found will be used for the temporary file area.
+Specifying no variable will result in the temporary files being
+stored on the current drive in the current directory. Using a large
+RAM disk, such as NJRAMD, for the temporary files will greatly
+increase the speed with which the merge takes place.  The area
+specified for the temporary area, however, must be large enough to
+hold the entire file.
+
+This "sort and merge" method allows NJSORT to sort files that are
+much larger than memory.  However, in the worst case, NJSORT will
+need twice the lenght of the file available as free space to sort 
+the file.  If, for example, you have a 100000 character file to
+sort, you must have at least 200000 bytes of free space on the
+diskette you wish to sort on.
+
+If you specify an alternate temporary directory, NJSORT only needs
+enough space to store the output file.  The disk will contain the
+100000 byte file and the 100000 byte output file, and the TEMP
+directory will contain the 100000 bytes of temporary files.
+
+On my 640k system, with 580k after DOS and all TSRs are loaded,
+NJSORT can typically sort files between 450 and 500 kilobytes in
+length without having to use temporary disk files.
+
+The complete sourcecode to the program is included in NJSORT.C and
+COMPARES.ASM.  The makefile used to build the program is called
+NJSORT.  I used BREIF to edit all the files here.  Since I am a fool
+for good formatting, I set BRIEF's tab stops at every three
+characters for .C files and at the 
+
+This program is a work of Shareware.  I am requesting a $10
+registration if you like the program.  If you do not like, or do not
+use, the program, please pass it on to a friend or another BBS.
+
+Currently, I have not found any bugs in NJSORT.  I have run billions
+of bytes of data through it in constructing and testing the program. 
+I have not found any problems with even the largest files using many
+keys and fields.
+
+One note, however.  Even if the input file contains an end of file
+marker, NJSORT will NOT write the marker to the output file.  For
+this reason, the output file may be one byte shorter than the input
+file.
+
+
+Thank you very much!
+
+
+Mike "Nifty James" Blaszczak
+35 Ginger Lane #229
+East Hartford, Connecticut
+	06118
+
+
+Version 1.10 Changes ---
+
+Version 1.10 implemented the /W# option to allow sorting of
+fixed-length fields.  This option may be specified to cause NJSORT to
+treat the input file as a file of records that are the of the
+specified length.  No terminating character will be looked for in the
+records; they will simply be read as blocks of bytes.
+
+This option does not work with the /I option to ignore whitespace. 
+It also will not work with the /C option to fix case, or the /D
+option to blast duplicate lines.  Of course, the /N and /M options
+are not allowed, either, as they support different reading methods.
+
+The sort key options may be used.  They will specify the byte offsets
+into the records at which keys should be considered.  /F0 is the
+first byte of the record, for example.
+
+If the file to be sorted contains incomplete records, NJSORT will not
+complete the sort.  Besides swapping the records, no other action is
+taken upon the binary data.
+
+The new version contains a small change that allows more items to be
+sorted in memory.  Previously, NJSORT would create a temporary file
+if more than 8000 items need to be sorted.  Now, NJSORT will wait
+until there are 13000 items in memory before creating a
+temporary file.  This improves efficiency if the items in memory are
+all rather short.
+
+Version 1.10 corrected some bugs that came about when sorting files
+larger than memory.  There were a handful of other minor bugs
+corrected throughout the program.
+
+In Version 1.10, the COMPARES.ASM module was changed for the
+Microsoft Macro Assembler Version 5.10.  This will allow
+compatibility for a possible later release of NJSORT which will use
+the newer Microsoft Languages to provide compatibility with NJSORT
+and versions of OS/2.
+
+
+Version 1.11 Changes ---
+
+A user in Hawaii provided most of the feedback that brought about
+this new version.  A problem in NJSORT's merge caused records to be
+dropped in some larger-than-memory sorts.  This problem has been
+corrected, and NJSORT should no longer lose information while sorting
+larger files.
+
+An additional option has also been added to NJSORT; /O#.  This option
+will allow the user to have NJSORT ignore the first records of the
+file to be sorted.  As an example, /O5  would cause NJSORT to read
+the first five records or lines from the input file and write them to
+the ouput file without changing their order.
+ 
+NJSORT underwent a few other changes to improve its speed.  The
+program should prove to be slightly more efficient than the previous
+version.
+ 
+Previously, NJSORT would incorrectly report the number of records or
+lines sorted.  This has been fixed in the new version.
+
+
+NJSORT Error Messages
+
+These are the error messages that NJSORT can generate, and the cause
+for each:
+
+NJSORT: Can't Sort a file with extension .BAK
+	A file with the extension of .BAK was supplied to NJSORT as
+	the filename to sort.  Since NJSORT names the sorted output
+	with the filename extension of .BAK, the program will not
+	sort input files with the extension .BAK
+
+NJSORT: Not enough memory
+	There was not enough memory to set up the basic housekeeping
+	data areas that NJSORT needs.  Generally, NSORT will require
+	no more ten kilobytes of memory for its own internal data and
+	buffer space.  You should never see this error -- if you do,
+	please make a note of the circumstances (computer, main
+	memory, TSRs loaded, file size to be sorted, command line
+	options, and DOS version) and send me the information.
+
+NJSORT: Can't write record number # in file "Filename"
+NJSORT: Can't write line number # in file "Filename"
+	These errors can occur when NJSORT can not write to a file. 
+	If NJSORT runs out of space while writing a temporary file,
+	or if the program runs out of space while writing the ouput
+	file, this error will result.  Try to create more free space
+	on the device, or use another device that has more room.
+
+NJSORT: Record # was incompletely read, only # of # bytes
+	In a Binary record sort, if NJSORT tries to read a record of
+	the specified length and actually reads less information than
+	that, this error will result.  The most common cause of this
+	error is specifying a record length that is not divisible by
+	the size of the file to be sorted.  For example, if the file
+	is 1050 bytes long and a record length of 100 was specified,
+	NJSORT would only find ten 100 byte records; the remaining 50
+	bytes would not constitute a full, sortable record.
+
+NJSORT: Input line # exceeds 2047 characters
+	NJSORT cannot handle records longer than 2047 characters when
+	doing an ASCII sort.  The input file is simply too wide to
+	sort.  This error also comes about when NJSORT gets a binary
+	file and wasn't given the /W parameter.
+
+NJSORT: there weren't enough input records to skip
+	You told NJSORT to skip more records than were actually found
+	in the input file.  Lessen the number of records to skip.
+
+NJSORT: can't have both <something> and <something else>
+	When parsing the options specified, NJSORT found two
+	conflicting options.  Some options are incompatible; for
+	example, you can not specify both /W and /M.
+
+NJSORT: key offset greater than recwidth
+	In a Binary Sort, NJSORT realized a record with was specified
+	and one of the keys was given as having an offset greater than
+	that record width.  Check the parameters that you gave.
+
+NJSORT: must have at least one field with /M or /N
+	The /M and /N options imply the use of sorting fields, and no
+	field size or offset was specified.
+
+NJSORT: <key> was too big
+	One of the specified key widths was larger than 2047, the
+	maximum record size for NJSORT.
+
+NJSORT: Can't open <filename> for input
+	The specified file was not found or was not available to
+	NJSORT for read access.
+
+NJSORT: Can't open <filename> for output
+	The requested or default output file was not valid or could
+	not be created by NJSORT.
+
+NJSORT: Too many temporary files!  Could not sort.
+	NJSORT needed to use more than eighteen temporary files, and
+	could not do so.  This error should only occur when sorting
+	files in the range of four to ten megabytes -- if it happens
+	in less demanding circumstances, inform the author.
+
+NJSORT: Couldn't setup temporary buffer
+	A problem occurred with NJSORT while trying to manipulate a
+	temporary file.  This error should rarely occur.  If it
+	happens twice, make a note of the environment and notify the
+	author.
+
+NJSORT: Couldn't open file <filename> for temporary use
+	There was a problem in accessing a temporary file.  This
+	should not occurr, unless the temporary file area ran out of
+	space just as NJSORT was opening the file.  Also, in a
+	multiuser environment, if another program attempts to
+	manipulate NJSORT's temporary file, this error may result.
+
+

@@ -1,0 +1,150 @@
+NJCHIME
+Nifty James' Famous Chimer
+Version 1.00 of 25 June 88
+(C) Copyright 1988 by Mike Blaszczak
+All Rights Reserved
+
+THIS PROGRAM MAY NOT BE REDISTRIBUTED OR RESOLD WITHOUT THE PRIOR 
+WRITTEN CONSENT OF THE AUTHOR.  THE PROGRAM MAY NOT BE OFFERED AS 
+INCENTIVE TO PURCHASE; DOING SO IS A CRIME.
+
+"Oh, Papa, but this one, she's for you!"
+
+     -- Breaking Away
+
+For quite some time, my dad has supported my meanderings with the 
+computer.  He would be off doing yardwork while his teenage son 
+hacked away at the computer.  So, for all those years of 
+patience, I have written my dad a program that he will certainly 
+like.  It is for his birthday later in July.  Of course, I will 
+probably get him something else, perhaps for his model planes or 
+something.  But I sure hope he will have fun with this program.
+
+My father, you see, seems to be fascinated with clocks.  Back 
+when I was much younger (yes, there is life before eighteen), he 
+built this big old grandfather clock from a kit.  It made three 
+different chimes, and it was certainly the cat's meow for some 
+time to come.  Now, we my parents also have a similar wall clock 
+in their kitchen.  I have since moved out to my own apartment to 
+start working and go to college.
+
+This clock could play three different chimes.  They were modeled 
+after several famous tower clocks around the world.  There were 
+the Saint Michael's chime, the Whittington chime, and the 
+Westminster chime.
+
+From the chimies of old, I have converted the old whirring and 
+clinking mechanisims into structures and bytes, pointers and 
+offests.
+
+NJCHIME is a terminate-and-stay resident program that attaches 
+itself to the BIOS timer-tick interrupt.  The program counts the 
+time internally, so that it does not bring any overhead into 
+system throughput by using DOS functions.  When the program 
+realizes that the time is nearing the hour, the program starts 
+chiming.
+
+In its default mode, NJCHIME produces "Time Tone" beeps.  These 
+consist of three short beeps, starting at three seconds before 
+the hour.  Then, at the hour, a longer and higher beep is given.  
+Many of the dial-up time services provide such a time tone.
+
+NJCHIME can be given the /M option on the command line to provide 
+the different clock chimes.  Using:
+
+     NJCHIME /M1
+
+would setup NJCHIME to use the Westminster chimes.  These are the 
+available chimes and their codes:
+
+     M0   -    Time Tones
+     M1   -    Westminster Chimes
+     M2   -    Saint Michael Chimes
+     M3   -    Whittington Chimes
+
+The Westminster chimes are the chimes that are played by Big Ben, 
+the most famous of all clock towers.  From its home in London, 
+England, the clock plays a melody based on a composition by 
+Handel.
+
+The Saint Michael Chimes are also from England.  However, the 
+Saint Michael Chimes were cast by an English craftsman for a 
+church in Charleston, South Carolina during the Revolutionary 
+war.  However, the British captured this city by battle, and took 
+the bells back to England.  Amazingly enough, the American rebels 
+stole the moulds for the bells, and a second set of bells was 
+cast and installed in the Carolinian church.
+
+The Whittington chimes were named for Lord Mayor Richard 
+Whittington.  Whittington started life in poverty.  However, he 
+made money in great volume by trading.  After his terms as Lord 
+Mayor of London, he became a philanthropist.
+
+If you select the M0 option of the program, NJCHIME will only 
+become active at the hour.  Otherwise, NJCHIME will faithfully 
+reproduce the chimes for each quarter hour of the clock.  The 
+program will also strike the hour by "Bonging" for each hour, or 
+striking just once for the half hour.
+
+Compatibility
+-------------
+
+NJCHIME takes a little less than 1024 bytes of DOS memory.  As 
+with other TSR programs, it is advisable to install NJCHIME 
+before you use SET to set up any additional environment 
+variables.
+
+NJCHIME should be compatible with every program -- it is not ill-
+behaved in any way.  If you use another program that accesses the 
+speaker port while NJCHIME is chiming or striking, the speaker 
+may sound fuzzled for a few notes.  However, due to the nature of 
+the IBM speaker output system, NJCHIME will recover gracefully 
+after a few notes.
+
+Whirrings And Klunkings
+-----------------------
+
+NJCHIME is a rather intricate program.  If you are familliar with 
+Microsoft BASIC, you will understand that NJCHIME implements much 
+of the PLAY command with its "Music Background" mode.
+
+NJCHIME basically monitors the system clock, counting the time in 
+its own internal representation.  At each clock tick, NJCHIME 
+checks through each of several modes that it can be using.  If 
+NJCHIME is Playing a note, resting between notes, bonging for the 
+hour, waiting between bongs, or selecting the next note, the 
+program executes slightly different code.  Of course, much of the 
+program is skipped over for most of the time.  The majority of 
+the time, the program is simply dormant.  However, while striking 
+the hour or chiming, the program excutes the remaining code.
+
+Getting Fancy
+-------------
+
+I have a personal version of NJCHIME that plays the opening bars 
+of "Stairyway To Heaven".  I am also considering converting some 
+sheet music from Pink Floyd and Rush compilations that I have.  
+If you would like to have NJCHIME play another tune or function 
+when you use it, please register your copy and send me a copy of 
+the sheet music which you would like to have coded.  I'll do my 
+best to reply to each of these requests in a prompt manner!
+
+Registration
+------------
+
+Of course, my father got his copy free.  But, if you find that 
+you're enjoying NJCHIME, I'd like to request that you send a 
+donation that you feel is appropriate for the program.  I would 
+request a contribution of $10, but you can send more or less, as 
+you see fit.
+
+Thank you for your time!
+
+Mike "Nifty James" Blaszczak
+35 Ginger Lane #229
+East Hartford, Connecticut  06118
+
+BIX:           blaszczak
+CompuServe:    76360,157
+NWI:           NIFTY JAMES
+

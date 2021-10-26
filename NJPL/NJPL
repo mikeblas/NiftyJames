@@ -1,0 +1,13 @@
+
+#
+# MAKE file for NJPL
+#
+# (C) Copyright 1988 by Mike Blaszczak
+#
+
+njpl.exe	: njpl.c
+		cl -Olsa -Gs -AS njpl.c
+		exemod njpl.exe /max 1
+		exepack njpl.exe njpl.pak
+		erase njpl.exe
+		ren njpl.pak njpl.exe

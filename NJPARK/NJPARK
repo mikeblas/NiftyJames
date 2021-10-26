@@ -1,0 +1,8 @@
+njpark.obj	:	njpark.asm
+		masm njpark;
+
+njpark.exe	:	njpark.obj
+		link njpark /map;
+
+
+

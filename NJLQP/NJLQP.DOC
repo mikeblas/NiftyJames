@@ -1,0 +1,344 @@
+
+Nifty James'  famous Letter Quality Printer
+
+Version 1.43 -- 3 April 1987
+
+(C) MCMLXXXV, MCMLXXXVI By  Mike "Nifty James" Blaszczak
+(C) MCMLXXXV, MCMLXXXVI  -  Yellow Jersey Software, Inc.
+
+
+This document isn't formatted at all.  It is, tho, eighty columns wide.
+
+Dedicated to the folks in "IBM ASSEMBLY"; Steve Gibson, Cynic Al, Mike
+Quinlan.  To Barbarian for getting me to C-things the right way, and to
+Mike Todd for being so supportive.  And so funny.  Special thanks to
+Avatar for catching some dormant, DOS 2.0 related bugs.
+
+The rain tapped on the roof and rivited the aluminum siding around the
+computer room.  The phosphors on the screen jumped to life, lighting the
+young man's face.  He tapped a few more keys, and the nearby printer
+screeched to life, temporarily scaring away the rain and drowning out the
+late night talk show host.  The programmer rose, rolling his chair back
+along the hexagons of the static-mat.  He fed the printer more paper, and
+ripped the result of his efforts from the printer.  He sighed, wrinkled
+his eyebrows, and crumpled the paper.  He sat down, staring at the screen,
+his tapping foot disrupting the rest of an empty Doritos' bag.  He tapped
+a few more keys, sending the cursor flying about the screen.  He paused,
+scratching his slowly apperaing stubble, tapped another key and the
+printer screeched to life once again.  As he rose, the clock atop his
+monitor beeped the arrival of three AM.  He tore the paper from the
+machine, and it was good.
+
+Nifty James' Famous Letter Quality Printer was born.
+
+
+NJLQP is a program that allows a computist with an EPSON graphics printer
+to print near-letter quality type.  The program works in a method much similar
+to the TYPE command of DOS, with a few enhancements.  It is designed for
+people who, for one reason or another, can't or won't buy a letter quality
+printer to replace their trusty old dot matrix.  NJLQP takes text from a
+standard ASCII file and prints it to your graphics-capable dot matrix
+printer.  It uses an attractive Roman Serif font, and runs at a reasonable
+speed.
+
+Once you unpack NJLQP from its archive, you can enter NJLQP from the DOS
+prompt.  You will be rewarded with the following "help" display:
+
+
+Usage:
+  [path\]NJLQP [drive:][\path\]filename [[drive:][\path\]filename] [options]
+
+        options --      -f  print formfeed after file
+                        -p  print over perforation
+                        -e  echo the file to stdout
+
+
+Ooof!  Well, all that means is this:
+
+
+1) If  you're using NJLQP under DOS 3.00 or greater, you can enter a
+   pathname before the command.  If you're in a directory called SOMEPLACE,
+   and NJLQP is in a directory called FARAWAY, you can run NJLQP by typing
+   it's path before it's name:  \FARAWAY\NJLQP.   If you don't really get
+   this, or didn't know about this feature, grab the DOS 3.10 manual, and
+   take a look at page 5-15.  If you're using a DOS version earlier than
+   3.0, you won't be able to type a path before the command name.
+
+
+2) NJLQP.  Well, that's the command name.  If you so choose, you can
+   rename the program to another, more convenient name.  All I ask is
+   that you remember to change the name back if you distribute it to
+   a friend or a BBS system.  Thanks!
+
+
+3) [drive:][\path\]filename.  This tells NJLQP what file you would like to
+   print.  Of course, only the file name *has* to be there.  If you want,
+   you can preceed it with a path, a drive name, or both.  NJLQP will open
+   this file, read it, and print it.  The command COPY FRED.TXT LPT1: and
+   NJLQP FRED.TXT both print the file FRED.TXT.  One, of course, just does a
+   better job of it.  You must specify a file extension, if there is one,
+   becuase NJLQP will not assume that there is one.
+
+
+4) [[drive:][\path\]filename].  This is an optional field.  If it's there,
+   it will be the output file or device.  If you enter NJLQP FRED.TXT COM1:,
+   then FRED.TXT will be printed, and the output will go to COM1.  If you
+   enter NJLQP FRED.TXT FRED.LQP, then FRED.TXT will be printed to FRED.LQP.
+   This is an interesting feature because you can use it to print in letter
+   quality to a printer spooler.  Later, you could type PRINT FRED.LQP, and
+   the letter quality version of FRED.TXT will be printed by the printer
+   spooler.  Be careful, though, because the letter quality version of a
+   file takes up about 24 times (!) as much space as the regular file.  This
+   should give you a good idea of how much graphics data is output to the
+   printer.
+
+   Now, watchout.  If you execute, say NJLQP THIS.TXT THIS.LQP in the
+   morning, and you decide to print it just before your coffee break, while
+   you won't be using the computer, anyway, you must use the /B option of
+   the COPY command.  When you enter COPY THIS.LQP LPT1: just as you get
+   your coffee, DOS will decide that THIS.LQP is shorter than it really is.
+   If, instead, you specify COPY THIS.LQP LPT1: /B, then DOS will correctly
+   calculate the length of THIS.LQP, and you'll be all set, no problems.
+
+
+5) [options].  These are the options; you should specify them last, if you
+   wish to specify them at all.  The options are listed after the command
+   line above, and I'll describe them below.  Anyway, you can preceed them
+   with a minus (-), or a slash (/); it doesn't matter, NJLQP will recognize
+   both.  The letter discribing the option can be upper or lower case, that
+   doesn't matter either; NJLQP will understand either.
+
+
+6) -f.  If you specify this option, NJLQP will automatically print a
+   formfeed after the file that was to be printed.  This is useful if you
+   are running NJLQP from a batch file, and you won't be around do tap the
+   "FF"  key on your printer.  If you don't specify this option, you'll have
+   to feed the paper yourself; printing will stop wherever it does.
+
+
+7) -p.  Most people use fan-feed paper.  Between each page, there is a
+   preforation.   If you specify the -P option, NJLQP will print over the
+   preforation, yielding sixty-six lines per page.  If you don't specify the
+   -P option, NJLQP will skip six lines around the perforation, and you will
+   only have sixty lines per page.
+
+
+8) -e.  If this option is not printed, NJLQP will only print is banner and
+   other progress information to the screen.  If you do specify this option,
+   the file will be printed to the standard output device (most often the
+   screen), as it is printed to the printer or the specified output file.
+
+
+That's really all you need to know about NJLQP to use it.  I'll talk about
+how I wrote the program and the traditional ShareWare plug, some perfomance
+information, and a techincal description of what's going on inside there.
+The sourcecode (NJLQP.ASM and EPSCHR1.INC) is included for your reference.
+
+
+Disadvantages
+-------------
+
+Well.  Since I'm an honest guy, I'll tell you about the problems with
+NJLQP.  It's my program, and I use it all the time, since I cant afford a
+better dot-matrix, or a good daisy-wheel printer.
+
+Firstoff, since NJLQP reads the keyboard constantly, you can't type ahead
+while the program is running.  NJLQP keeps reading the keyboard to see if
+you pressed ESC.  If it gets any other character, it disreguards it.  So,
+while NJLQP is doing its thing, you can't make use of the keyboard buffer.
+Sorry... I love to type ahead, and this error hurts me, too.  In the next
+version, it will be corrected.
+
+The other problem is that NJLQP won't accept wildcard filenames.  That is,
+you can't say
+
+    NJLQP *.TXT -f
+
+to print all the files with the extention .TXT.  This will be fixed in the
+next version, too.  But, for now, you can make use of a little-known DOS
+trick to type more than one file.  At the DOS prompt, type this:
+
+   FOR %1 in (*.TXT) do NJLQP %1 -f
+
+That will search the disk for every file with the .TXT extension.  Note
+that the files that you want to specify are in parenthesis there.  After
+the word "do", you should type the command for NJLQP as you would normally
+use it.  You can include any options that you want.  To print the files
+THIS, THAT and OTHER, you'd use this:
+
+   FOR %1 in (THIS THAT OTHER) do NJLQP %1 -f
+
+If you want more information on this feature of DOS, it's on page 6-37 of
+the DOS 2.00 manual; on page 2-22 of the DOS 2.10 manual; and on page 7-32
+of the DOS 3.10 manual.  (Note though, that the examples in the DOS books
+show the command with two percent signs... you only need one, in this
+application.)
+
+
+Shareware and Me
+--------- --- --
+
+Okay.  You downloaded this program from a BBS or the IBMSIG or somesuch
+place.  And you use it.  Quite a bit... at least once or twice a week, to
+print letters, files, all kinds of stuff.  You really appreciate the idea.
+So, then, send me some money!
+
+I put a good deal of time into this program; I think it is quite
+significant.  It can be the difference between you throwing out a big wad
+on a letter quality printer, or a denser dot-matrix printer.  You got it
+for free, for the cost of a phone call or online time or whatever.  I
+spent some time writing it, though.  I'm sort of a starving artist.  I'm a
+teenager, just a high-school student.  And shelling out $150 for a macro
+assembler or five hundred bucks for a C compiler is an arm and a leg.
+Especially after paying for a computer system in the first place.  If
+you could send $5 or $10 or even $20, I'd really appreciate it.
+
+Thank you, very much.
+
+Now, even if you can't, or don't want to send some dough, I can understand.
+If you've comments, compliments, criticisims, or questions, get them to me,
+and I'll try to get you an answer.  Include a method of reaching yourself;
+your Source number, or your mailing address.  I'll try to get back to you.
+
+
+Support
+-------
+
+Now, if you've another kind of printer, and you've seen a sample of this
+program, and you're dying to have it run on your system, then drop me a
+line.  If you can get the information I need to me somehow, I can most
+likely re-write or create a new version for your printer.  I've tried
+writing to printer companies for information, but they have been pretty
+quiet, so far.
+
+If you find a bug or a problem or a glitch or something, please let me know.
+I can't diagnose everything, especially from a distance through a asynch
+port, but I'll try.
+
+And, of course, if you'd like to write me just for the hell of it, feel free
+to.  I like to have pen-pals.
+
+
+Performance
+-----------
+
+                (Times in seconds)
+
+
+                   Output sent to:
+
+                   Floppy Drive     RAM Disk      NUL      Paralell FX80
+Printing What?     ------------     --------      ---      -------------
+--------------
+434 byte AUTOEXEC                     5.30        2.90          36.38
+    .BAT file
+
+1487 byte README                     17.67       10.38
+     file
+
+This NJLQP.DOC                                   58.83         789.91
+     file
+(about 15000
+ characters)
+
+                (Speeds in CPS)
+                                                                         (*)
+                   Floppy Drive  RAM Disk   NUL   Paralell FX80   COPY LPT1:
+Printing What?     ------------  --------  -----  -------------   ----------
+--------------
+434 byte AUTOEXEC                 81.87   149.83      11.93          45.30
+    .BAT file
+
+1487 byte README                  84.15   143.26
+     file
+
+This NJLQP.DOC                    (TB)    256.38      18.53          68.51
+     file
+(about 15000
+ characters)
+
+
+(TB) - Too big... the resulting file was simply too big for the named device
+       to handle.  (ie, my RAM drive simply can't hold all the data that
+       NJLQP generated.)
+
+(*)  - This just shows how fast the a paralell Epson FX80 normally prints;
+       all the other tests show how fast NJLQP prints.
+
+
+Benchmark Mania
+--------- -----
+
+These charts are just to compare NJLQP to other methods of printing, and to
+let you compare NJLQP to your favoirte daisy-wheel or other letter quality
+printer.
+
+I took the times from the when <ENTER> was pressed on the command line to
+when the DOS prompt was displayed.  The file to be printed was stored on a
+RAM Drive, so there is no error or deviation from having a certain floppy or
+hard drive or some such.  Of course, the RAM Drive in question is VDISK 2.0
+from the DOS 3.1 package.  I did the timing with a digital stopwatch.
+
+Each timing is the result of an average of three runs.  The CPS value is
+simply the number of bytes in the file divided by the number of seconds to
+print the file.
+
+
+
+Batch Files
+----- -----
+
+You might want to print a whole bunch of files at once.  The most logical
+way to do this would be to either run NJLQP with a print spooler, or to run
+it in a .BAT file while you sleep, get some coffee, or call Mom.  To aid in
+batch file printing, NJLQP allows the user to read ERRORLEVEL to see what
+happened.   These values are returned from NJLQP:
+
+    ERRORLEVEL        Problem
+    ----------        -------
+        0             None; file printed successfully.
+        1             Usage error, ie, too many filenames or
+                        bad options or some other unrecognizable
+                        stuff on the command line.
+        2             Too Full.  The output device was full, the
+                        output file was erased.
+        3             File open error.  Either the input file
+                        wasn't found, or the output device was
+                        full.
+        4             User aborted by tapping ESC.
+
+
+
+
+About Money
+----- -----
+
+I need it.  BAD.  If you'd care to send a contribution, I really wouldn't
+mind much.  Thank you!
+
+I welcome any feedback and suggestions that you'd care to offer.
+
+If you have a printer that this program doesn't work for, please let me
+know.  If you send in a contribution and a letter telling me the program
+doesn't work and the printer it won't work on, I'll get back to you and
+see if we can work it out.
+
+This version is written for the EPSON, and says so in the banner (type
+NJLQP with no parameters).  If another version is made available, it will
+mention the name of that printer in
+the banner.
+
+
+     Mike Blaszczak   (please, *don't* write checks to Nifty James)
+     112 Verlinden Drive
+     Monroeville, Pa, 15146
+
+If you would like to contact me electronically, I'm usualy around at
+BCB922 on the $ource, or as NIFTY JAMES on Participate on the Source.  I'm
+also on as Mike Blazak (note the new, improved, last name) on many
+Pittsburgh area BBS systems (412 area code).  You can get me in
+Participate on NWI under the names NIFTY JAMES and MIKE B.  I now have a
+CompuServe account, too.  It's 76210,1456.  You can send me letters any
+time you want, talk about anything.  I don't care.  You will probably
+get an answer; I love to talk and meet people, and I love to have pen-pals.
+

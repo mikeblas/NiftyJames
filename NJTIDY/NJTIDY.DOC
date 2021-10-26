@@ -1,0 +1,85 @@
+
+
+Nifty James' Famous Disk Tidier
+
+Version 2.00
+Copyright (C) 1987, 1988 by Mike Blaszczak
+
+
+
+This program is designed for the hard disk user who finds that he has
+many backup or null files on his disk at the end of each work
+session.
+
+The program is run simply by typing NJTIDY with the program on the
+current command path.  NJTIDY will find all the subdirectories on the
+currend disk and will remove all *.BAK files, as well as any files
+that have a length of zero.
+
+NJTIDY displays the name of each file as it is deleted.  NJTIDY will
+also display a summary of files that it has erase, as well as a total
+showing how much disk space was freed.
+
+This program is a work of Shareware.  REDISTRIBUTING IT FOR PROFIT
+WITHOUT THE AUTHOR'S PRIOR WRITTEN CONSENT IS NOT LAWFUL.  NJTIDY may
+be registered with its author for $10, or whatever the user deems
+appropriate.
+
+--------------------- Version 2.00
+
+Firstoff, I fixed the spelling.
+
+Michael Murphee, who this program was originally written for, pointed
+out the fact that the program didn't delete zero-length files in the
+root directory.  That was a logic error on my part, and I've fixed
+it.
+
+I've made the program slightly faster, and that's always desirable.
+
+Also, upon request from a user in the IBMSIG EXCHANGE on The SOURCE,
+I added another feature to the program.  If you enter any words on
+the command line after NJTIDY, the program will search for files with
+those extensions and delete them.
+
+As a programmer, I often end up with many useless .MAP files lying
+about.  So, I use
+
+    NJTIDY MAP
+
+and that tells NJTIDY to delete all *.BAK files, as well as all *.MAP
+files.  You can not specify wildcards in the file extension here, but
+you can list up to 64 extensions to search for.
+
+Additionally, you can give NJTIDY a disk drive specifier to have the
+program tidy that drive.  For example, to clean up on the A: drive,
+use
+
+    NJTIDY A:
+
+You can use the extensions and disk drive specifier in any order.
+The only restriction is that the specifier must contain the colon,
+and there must only be one specifier on a line.  So,
+
+    NJTIDY A: MAP TMP
+
+is functional, as is
+
+    NJTIDY MAP TMP A:
+
+I hope that you find NJTIDY useful!
+
+--------------------- Version 2.10
+
+I added an option, /P, to cause the program to prompt the user if the
+file should really be deleted or not.  If the user enters Q, for
+quit, the program exits and prints a status report.
+
+Without the /P option, the program works as normal.  The /P option
+may appear anywhere on the command line.
+
+
+Mike "Nifty James" Blaszczak
+112 Verlinden Drive
+Monroeville, PA  15146-2041
+
+

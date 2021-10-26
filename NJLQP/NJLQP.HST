@@ -1,0 +1,57 @@
+
+Revision List:
+
+                  V1.00 -- 20 Jan 1986 to 24 Feb 1986
+
+NJLQP in its infancy.  This program worked, and was simply the stepping
+stone from a plan to a real program.
+
+
+                  V1.20 -- 24 Feb 1986 to 15 Mar 1986
+                       (added the "output to" file name, -f and -s
+                        options, and better graphics characters)
+
+Added some creature comforts.  Also, the flow and structure of the program
+was greatly improved.
+
+
+                  V1.32 -- 16 Mar 1986 to 05 May 1986
+                       (Macro Assembler Version 4.00, different
+                        structure, better loops, ect)
+
+The first distributed version of NJLQP... it was avaialbe in a few places
+in Pittsburgh.
+
+                  V1.39 -- 06 May 1986 to 20 Aug 1986
+                       (Now it all works!)
+
+The semi-final version of NJLQP.  It had a couple of annoying bugs, but
+now runs like a champ!
+
+                  V1.41 -- 08 Mar 1987
+                       (Got rid of that annoying little arrow
+                        at the end of some files.)
+
+This version got rid of the bugs in Version 1.39.  But, the changes made
+to this version caused another hidden problem.  I was about to start
+distributing this version when...
+
+
+                  V1.42 -- 26 Mar 1987
+                       (Fixed a bug under DOS versions prior to
+                        DOS 3.00.  Thanks, AVATAR!)
+
+AVATAR, one of my customers, said that he was having problems running
+the program under MS-DOS Version 2.11.  Shure enough, one of the problems
+from an earlier version had come back to haunt me.  All fixed and made
+better again!
+
+                  The future
+
+The next released version of NJLQP will be Version 2.00.  It will include
+a special editor that allows you to define your own charaters.  The
+printer program will include an option to load a special user font,
+in place of the current font.  Also, wildcards will be allowed on the
+command line.  The program will not poll the keyboard, so the typeahead
+buffer will function again.  And, best of all, MORE SPEED!
+

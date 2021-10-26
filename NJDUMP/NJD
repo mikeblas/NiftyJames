@@ -1,0 +1,13 @@
+
+dumpthre.obj:	dumpthre.c njdump.h
+	njpl -t msc "dumpthre,dumpthre,nul, nul /G2 /W3 /Zi /Od /DDEBUG /DLINT_ARGS;"
+
+dumptwo.obj:	dumptwo.c njdump.h
+	njpl -t msc "dumptwo,dumptwo,nul,nul /G2 /W3 /Zi /Od /DDEBUG /DLINT_ARGS;"
+
+njdump.obj:	njdump.c njdump.h
+	njpl -t msc "njdump,njdump,nul,nul /G2 /W3 /Zi /Od /DDEBUG /DLINT_ARGS;"
+
+njdump.exe:	njdump.obj dumptwo.obj
+	njpl -t link "njdump+dumptwo+dumpthre,njdump.exe,njdump.map /map /noi /codeview,\lib\snjlib;"
+

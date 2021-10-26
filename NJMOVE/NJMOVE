@@ -1,0 +1,14 @@
+#
+# MAKEFILE for Nifty James' Famous File Mover
+# (C) Copyright 1989 by Mike Blaszczak
+# All Rights Rerserved.
+#
+# Released Version (No DEBUG Information)
+#
+
+njmove.obj:	njmove.asm
+	masm /v /Ml njmove;
+
+njmove.exe:	njmove.obj
+	link njmove /noignorecase /exepack;  
+

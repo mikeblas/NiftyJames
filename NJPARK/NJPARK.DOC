@@ -1,0 +1,76 @@
+
+
+Nifty James' Disk Parking Utility
+Version 1.00 of 11 June, 1988
+(C) Copyright 1988 by Mike Blaszczak
+All Rights Reserved by Author
+
+
+
+THIS PROGRAM MAY NOT BE REDISTRIBUTED WITHOUT THE PRIOR WRITTEN
+CONSENT OF THE AUTHOR.  RESELLING THIS PROGRAM FOR PROFIT OR OFFERING
+THIS PROGRAM AS INSENTIVE TO PURCHASE IS UNLAWFUL.
+
+
+
+This simple utility quickly parks the read-write heads of all hard
+disk drives attached to the system.  The program has been tested on
+Seagate ST-238, ST-238R, and ST-251 drives.  The program should work
+with all Seagate hard disk drives, and will probably work with any
+hard disk drive that has a landing area after the last data cylinder.
+
+To run NJPARK, simply type
+
+	NJPARK
+
+at the DOS command prompt.  The NJPARK.EXE file will be loaded and
+run.  The program will report an error if the BIOS thinks that no
+disk drives are installed.  For this reason, the program may not work
+on older systems with special nonstandard hardware.
+
+NJPARK will then find the last data sector for each disk drive, and
+try to seek eight cylinders past that data sector.  This is the
+method specified by Seagate:
+
+	"The read/write heads may be parked in the shipping zone by
+	 issuing a seek to any cylinder between 615-670.  The drive
+	 may then be powered down."
+
+(This is from the Seagate ST-238 Product Manual, section 1.8.3.)
+
+Since this seek-to-landing cylinder range is just past the last
+normal data cylinder, NJPARK will seek to it by adding eight
+cylinders to the last cylinder number.
+
+NJPARK prints a message for each hard disk drive parked.  The message
+should reflect a number that is within your hard disk drive's parking
+zone.  For most drives, you can tell that the heads are parked by a
+louder click when the heads are latched, or a very long seek time as
+the drive pulls the head assembly out of the way.
+
+If you have any doubt that NJPARK will not work for your hard disk
+drive, you should consult the disk drive manufactuer.
+
+I can assume no responsibility, direct or indirect, for the use of
+NJPARK.  I use it on my own drives, and that should be enough proof
+that I have confidence in my own work.  If another parking program
+was supplied with your drives, you should use that program if
+possible.
+
+If you find this program useful, please send a registration fee of
+$5.  To mail your check, or to adress me with any comments,
+suggestions, or questions about this or any of my other Shareware
+products, please use this address:
+
+	Mike Blaszczak
+	35 Ginger Lane #229
+	East Hartford, CT  06118
+
+Thank you very much!
+
+
+
+
+
+
+
