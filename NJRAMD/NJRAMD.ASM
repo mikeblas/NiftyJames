@@ -5,11 +5,13 @@
 ;  Version 1.01  of  24 May 1987
 ;  Version 1.10  of  25 May 1987
 ;  Version 1.15  of  31 May 1987
+;  Version 1.20  of  16 Oct 1987
 
 ;  Shareware  $10     Please contribute!
 
 ;  Assemble with
 ;	MASM NJRAMD;
+;		(Use MASM /DV286 NJRAMD; to assemble 286 version.)
 ;	LINK NJRAMD;
 ;	EXE2BIN NJRAMD.EXE NJRAMD.SYS
 ;	DEL NJRAMD.EXE
@@ -172,6 +174,25 @@ rwhead		ends
 
 ; makes all the command-specific structures "equivalent".
 
+; Check to see if this is the 286 version
+
+ifdef  V286
+	.286
+	if1
+		%OUT	Enhanced processor version
+	endif
+	ifdef	PCL
+	if1
+		%OUT	for the PC's Limited 286/386
+	endif
+	endif
+else
+	if1
+		%OUT	Standard Version
+	endif
+endif
+
+
 ;  This macro is used during debugging.  It prints a single character
 ; via the BIOS screen interface, and leaves the registers unchanged.
 
@@ -181,6 +202,14 @@ ifdef	DEBUG
 		%OUT  DEBUG Version
 	endif
 	PrintChar	macro	Char
+		ifdef	PCL
+
+			push	ax
+			mov	al,Char
+			out	095h,al		; put it digit 3 of smartvu
+			pop	ax
+
+		else
 	
 			push	ax		; save the regs
 			push	bx
@@ -199,7 +228,8 @@ ifdef	DEBUG
 			pop	dx
 			pop	bx		;restore the regs
 			pop	ax
-		
+
+			endif
 			endm
 
 else
@@ -226,14 +256,14 @@ PUBLIC ReadFinish, ReadError, WSEC, Write, WriteLoop, WriteDone, WriteFinish
 PUBLIC WriteError, CLIPPER, RangeError, InRange, SPEAKERCLICK, MakeClick
 PUBLIC NoClick, SpeakerFlag, LastTime, GS, GetSector, CantGet, LastResident,
 PUBLIC EMMPresent, GenFailHook, EMMPresent2, MemForMe, EatingWhite, GotOption
-PUBLIC NoBump, NotSilence, PagesLoop, LastDigit, NotPages, Unrecognized
-PUBLIC EndOfLine, GoodSize, GotPages, BigBust, ReTry, GoodCombo, NoKludge
-PUBLIC WipeOut, WipeOut2, FindFree, CalcEMMFree, CalcDiskFree, ClickOkay
-PUBLIC MsgOkay, InitFail, GenFail, HowMuch, RqdPages, MajorVersion, OurVolume
-PUBLIC Banner, EMMIDString, General, NoEMMThere, EMMError, Init
-PUBLIC NoMem, TooBig, BadOption, NoClicking, Installed, DriveName, InstalledB
-PUBLIC Installed2, UsedSpace, Bin2Dec, Bin2DecLoop, Bin2DecDigit, WorkAreaL
-PUBLIC WorkAreaH
+PUBLIC NoBump, NotSilence, PagesLoop, LastDigit, NotPages, NotUseAll,
+PUBLIC Unrecognized, EndOfLine, GoodSize, GotPages, BigBust, ReTry
+PUBLIC GoodCombo, NoKludge, WipeOut, WipeOut2, FindFree, CalcEMMFree
+PUBLIC CalcDiskFree, ClickOkay, MsgOkay, InitFail, GenFail, HowMuch
+PUBLIC RqdPages, MajorVersion, OurVolume, Banner, EMMIDString, General
+PUBLIC NoEMMThere, EMMError, Init, NoMem, TooBig, BadOption, NoClicking
+PUBLIC Installed, DriveName, InstalledB, Installed2, UsedSpace, Bin2Dec
+PUBLIC Bin2DecLoop, Bin2DecDigit, WorkAreaL, WorkAreaH
 
 ; ---------------------------------------------------------------------------
 
@@ -366,16 +396,20 @@ PrintChar 'D'
 		mov	ss,ax
 		sti
 
+	ifdef V286
+		pusha
+	else
 		push	bx		; save the other regs
 		push	cx
 		push	dx
 		push	bp
 		push	si
 		push	di
+	endif
+
 		pushf			; and the flags
 		cld			;  set the string direction up
-
-		push	es		; save the segregs
+		push	es
 		push	ds
 
 		mov	ds,ax		; setup the data segment register
@@ -472,17 +506,23 @@ NoRestore:	or	ax,donestat		; set the done status
 		pop	es
 
 		popf			; the flags
+	ifdef V286
+		popa
+	else
 		pop	di
 		pop	si		; and the data regs
 		pop	bp
 		pop	dx
 		pop	cx
 		pop	bx
+	endif
 
 PrintChar 'd'
+		cli
 		mov	ax,CS:SaveAX
 		mov	sp,CS:SaveSP	; restore the calling stack
 		mov	ss,CS:SaveSS
+		sti
 		ret
 
 INTPROC		endp
@@ -554,6 +594,18 @@ BBPB		endp
 
 RSEC		proc	near
 Read:
+
+	ifdef PCL
+		mov	al,'N'
+		out	097h,al
+		mov	al,'J'
+		out	096h,al		; display "NJ-R" on Smart-Vu
+		mov	al,'-'
+		out	095h,al
+		mov	al,'R'
+		out	094h,al
+	endif
+
 PrintChar 'R'
 		call	CLIPPER		; do the clipping, if need be
 
@@ -584,10 +636,8 @@ PrintChar 'y'
 ReadDone:	xor	ax,ax		; clear error flags
 
 ReadFinish:	les	bx,[RBPoint]	; point to request header
-		push	ax
-		mov	ax,TDone	; store actual transferred
-		mov	rq.Count,ax
-		pop	ax
+		mov	dx,TDone	; store actual transferred
+		mov	rq.Count,dx
 		jmp	MakeClick	; finish clicking
 
 ReadError:	mov	ax,(err_badread+errorflag)  ; there was an error!
@@ -610,6 +660,17 @@ RSEC		endp
 
 WSEC		proc	near
 Write:
+	ifdef PCL
+		mov	al,'N'
+		out	097h,al
+		mov	al,'J'
+		out	096h,al		; display "NJ-W" on Smart-Vu
+		mov	al,'-'
+		out	095h,al
+		mov	al,'W'
+		out	094h,al
+	endif
+
 PrintChar 'W'
 		call	CLIPPER		; do the clipping, if need be
 
@@ -638,10 +699,8 @@ PrintChar 'k'
 WriteDone:	xor	ax,ax		; clear error flags
 
 WriteFinish:	les	bx,[RBPoint]	; point to request header
-		push	ax
-		mov	ax,TDone	; store actual transferred
-		mov	rq.Count,ax
-		pop	ax
+		mov	dx,TDone	; store actual transferred
+		mov	rq.Count,dx
 		jmp	MakeClick	; finish clicking
 
 WriteError:	mov	ax,(err_badwrite+errorflag)  ; there was an error!
@@ -736,9 +795,13 @@ PrintChar 'G'
 		jg	CantGet
 
 		push	ax		; save a copy of the number
+	ifdef	V286
+		shr	ax,5
+	else
 		mov	cl,5
 		shr	ax,cl		; divide the sector by 32
 					;   so that AX=EMM Page
+	endif
 
 		cmp	ax,LastTime	; is it the same thing 
 		je	Optimized	;  we got last time?
@@ -755,8 +818,12 @@ PrintChar 'G'
 
 Optimized:	pop	ax		; retrieve the remainder
 		and	ax,01Fh		; mask out high bits of offset
+	ifdef V286
+		shl	ax,9
+	else
 		mov	cl,9
 		shl	ax,cl		; find the offset of the sector
+	endif
 		mov	di,ax
 		clc
 PrintChar 'g'
@@ -913,7 +980,14 @@ LastDigit:	mov	RqdPages,dx	; save requested number of pages
 BadPages:	mov	dx,offset TooSmall
 BadPages2:	jmp	InitFail
 
-NotPages:
+NotPages:	cmp	al,'A'			; is it use all memory?
+		jne	NotUseAll
+
+		mov	ax,HowMuch
+		mov	RqdPages,ax		; request them all
+		jmp	EatingWhite
+
+NotUseAll:
 Unrecognized:	mov	dx,offset BadOption	; don't install
 		jmp	short BadPages2
 
@@ -946,8 +1020,12 @@ GotPages:	mov	EMMHandle,dx		; save the handle for later
 	; status of the RAM drive.  First, we'll store the DiskSize.
 
 		mov	ax,RqdPages		; get number of pages
+	ifdef	V286
+		shl	ax,5
+	else
 		mov	cl,5			; thirty-two 512-byte sectors
 		shl	ax,cl			;  in a 16384-byte page
+	endif
 		mov	DiskSize,ax		; store it in BPB
 
 	; Now, we'll figure out how many entries there will be in the
@@ -955,8 +1033,12 @@ GotPages:	mov	EMMHandle,dx		; save the handle for later
 	; each 2k of storage that the disk has.  We won't allow moer
 	; than 512 root dir entries, though.
 
-		mov	cl,2			; figure out length of
-		shr	ax,cl			; root directory
+	ifdef	V286
+		shr	ax,2
+	else
+		shr	ax,1			; figure out length of
+		shr	ax,1			; root directory
+	endif
 		cmp	ax,512			;  1 entry per 2k of storage
 		jl	BigBust			;  up to 512
 
@@ -1106,8 +1188,12 @@ CalcEMMFree:	rcl	bx,1		; shift it low side
 		mov	bx,ax		; put that subtotal in bx
 
 		mov	ax,RDirLen	; get the entries in the root dir
+	ifdef V286
+		shr	ax,4
+	else
 		mov	cl,4
 		shr	ax,cl		; divide by # of entries per sec
+	endif
 		sub	bx,ax		; subtract some more
 		dec	bx		; and adjust down
 
@@ -1212,7 +1298,7 @@ OurVolume	db	'Niftys_Disk'	; 11-byte volume name
 		dw	953
 			;FEDCBA9876543210b
 			;YYYYYYYMMMMDDDDD
-		dw	00000111010111001b	; DATE = May 25, 1987
+		dw	00000111101011111b	; DATE = Oct 31, 1987
 		db	6 dup (0)	; more reserved space
 
 OurVolumeLen	equ	16
@@ -1225,7 +1311,15 @@ OurVolumeLen	equ	16
 
 Banner		db	cr,lf,"Nifty James Famous E/EMS RAMdisk Drive",cr,lf
 		db	'Copyright 1987 by Mike Blaszczak',cr,lf
-		db	'Version 1.15 of 31 May 1987',cr,lf,lf,eos
+		db	'Version 1.20 of 16 Oct 1987',cr,lf
+	ifdef V286
+	ifdef PCL
+		db	"PC's Limited Version",cr,lf
+	else
+		db	'Enhanced Processor Version',cr,lf
+	endif
+	endif
+		db	lf,eos
 
 EMMIDString	db	'EMMXXXX0'
 

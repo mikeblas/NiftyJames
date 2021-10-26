@@ -2,11 +2,15 @@
 
    Nifty James' Famous (Enhanced) Expanded Memory RAM Disk Drive
 
-   Version 1.15  of  31 May 1987
+   Version 1.20  of  16 Oct 1987
 
    (C)  Copyright 1987 By Mike Blaszczak.  All Rights
-   Reserved.  This is a Shareware Program. A $10 donation
+   Reserved.  This is a Shareware Program. A $15 donation
    is requested.
+
+   THIS PROGRAM MAY NOT BE RESOLD WITHOUT THE PRIOR WRITTEN
+   CONSENT OF THE AUTHOR.  "REPUBLISHING" SHAREWARE PROGRAMS
+   WITHOUT THE AUTHOR'S KNOWLEDGE IS A CRIME.
 
 
 Introduction
@@ -30,11 +34,13 @@ Introduction
    2.10.  The program should work with MS-DOS, but it
    hasn't been "officially" tested.
 
-   NJRAMD takes up very little DOS space -- the program
-   uses less than 710 bytes of DOS memory, regardless of how
-   large the disk space is made.  Thus, you can partition
-   a very large RAM disk, and only take up a very small
-   portion of precious DOS memory.
+   NJRAMD takes up very little DOS space -- the program,
+   depending on the configuration that you use, takes
+   around 720 bytes of DOS memory, regardless of how large
+   the disk space is made.  The smallest configuration of
+   NJRAMD takes under 700 bytes of DOS memory.  Thus, you
+   can partition a very large RAM disk, and only take up a
+   very small portion of precious DOS memory.
 
 
 Use and Installation
@@ -53,6 +59,29 @@ Use and Installation
                       device=\sys\initial.sys
                       device=\sys\ansi.sys
                       device=\sys\njramd.sys
+
+|  Starting with version 1.20, this version, NJRAMD also
+|  comes with a file specially prepared for computers with
+|  extended instruction sets.  This includes processors
+|  like the 80186, 80286, and 80386.  You can also make
+|  use of this version if you have a NEC V-20 or V-30
+|  installed and running in your system.
+
+|  The version is called NJRAMDXP.SYS.  "XP" stands for
+|  "Enhanced Processor".  This version of NJRAMD is coded
+|  to take advantage of the special, extra instructions that
+|  some CPU's have.  It is slightly smaller, and
+|  considerably faster than the standard version.  If this
+|  version doesn't work on your system, use the regular
+|  version.
+
+|  Even if you only have a stock PC with a NEC V-20, you
+|  can expect the newver version of NJRAMD to be up to 5%
+|  faster in benchmark tests.  On a real 80286 system, the
+|  program will run up to 9% faster.
+
+|  See the paragraph just before "Technical Information" if
+|  you have a PC's Limited computer.
 
    You might also have settings for the BUFFERS, FILES,
    STACKSPACE, and BREAK settings in your CONFIG.SYS file.
@@ -94,6 +123,12 @@ Use and Installation
 
    Remember that if you don't tell NJRAMD otherwise, it
    will try to create a 512k RAM Disk.
+
+|  In version 1.20 of NJRAMD, you can use the /A switch to
+|  use *all* of the available EMS memory, automatically,
+|  instead of specifying a /P option.  Note, though, that
+|  the /A option will not leave any memory for other EMS
+|  programs, such as disk cache programs or for 1-2-3.
 
    If there is no EMS memory available, at all, when NJRAMD
    tries to load, you will see this message:
@@ -147,6 +182,19 @@ Clicking
 
    when it is installed.
 
+|  If you have an PC's Limited computer, with a Smart-Vu
+|  display, try using the program NJRAMDPL.SYS.  This
+|  version is the same as the other versions, but it
+|  writes to the Smart-Vu display.  When NJRAMD is writing,
+|  the display will show "NJ-W", and when it is reading, it
+|  will show "NJ-R".  Other than the statements that take
+|  care of the display, this version of the program is
+|  identical to NJRAMDXP.SYS.
+
+|  If you have a PC's Limited and do not want NJRAMD to
+|  access the Smart-Vu display, use the NJRAMDXP.SYS
+|  program.
+
 
 
 Technical Information
@@ -165,7 +213,7 @@ Shareware
 ---------
 
    This program is a work of Shareware.  If you use the
-   program, I expect you to end a donation.  I'm asking $10
+   program, I expect you to end a donation.  I'm asking $15
    for the program, but, if you would like to send $5 or
    $25, that's fine, too.
 
@@ -176,10 +224,10 @@ Shareware
    of NJRAMD will not be erased if you use
    <CTRL>+<ALT>+<DEL> to reset your system.
 
-|  This planned change is unfeasible, however.  Since the
-|  EMS manager overwrites the information in the expanded
-|  memory when it is installed, the RAM Drive's contents
-;  will always be erased after a warm boot.
+   This planned change is unfeasible, however.  Since the
+   EMS manager overwrites the information in the expanded
+   memory when it is installed, the RAM Drive's contents
+   will always be erased after a warm boot.
 
    If you would like to write to me, my address is
 
@@ -189,13 +237,19 @@ Shareware
 
    I'm also available on Participate On The SOURCE as NIFTY
    JAMES.  My SOURCE ID is BCB922, and you're welcome to
-   send me SMAIL.  If you want to contact me on CompuServe,
-   my ID there is 76210,1546.  I'm also available on the
-   NWI Conferencing System, as NIFTY JAMES or MIKE B.
+   send me SMAIL.  I'm also available on the NWI
+   Conferencing System, as NIFTY JAMES or MIKE B.
 
    Please feel free to send your comments, questions,
    suggestions, donations, marriage proposals, and
    get-rich-quick schemes.
+
+   I'm really interested in hearing any ideas that you
+   have about NJRAMD, as well as any questions you have
+   about it.  If you run into any problems, please feel
+   free to call or write.  (I don't give my phone number,
+   but, if you're serious enough, call directory
+   assistance.)
 
 
 A Special Note
@@ -207,16 +261,20 @@ A Special Note
 
    Hats off to a couple of wonderful people!
 
-|  Doctor File Finder managed to find a bug in the first
-|  version that sometimes caused the program to trash the
-|  files on the disk -- the GetSector procedure wasn't
-|  working properly.  The problem has been corrected in
-|  this version, and the program's optimization in the
-|  GetSector proceudre is now fully functional.
+   Doctor File Finder managed to find a bug in the first
+   version that sometimes caused the program to trash the
+   files on the disk -- the GetSector procedure wasn't
+   working properly.  The problem has been corrected in
+   this version, and the program's optimization in the
+   GetSector proceudre is now fully functional.
 
-|  Again, the Good Doctor helped me track down the bug that
-|  sometimes caused this device driver to ignore the /Page
-|  option.  Thanks, Doc!  The fix was made, and this is
-|  now Version 1.15.
+   Again, the Good Doctor helped me track down the bug that
+   sometimes caused this device driver to ignore the /Page
+   option.  Thanks, Doc!  The fix was made, and this is
+   now Version 1.15.
 
+|  Version 1.20 just let me flex my 80286 knowledge by
+|  adding the additional instructions.  The program also is
+|  the first version to be developed under Microsoft Macro
+|  Assembler Version 5.00.
 

@@ -1,0 +1,111 @@
+
+
+Big apologies to everyone who wanted this information, but had to
+wait.  I've been too busy, lately.
+
+I benchmarked NJRAMD, Ray Duncan's EMS DISK, IBM DOS 3.10's VDISK,
+and my Seagate ST-238/Adaptek 2070A RLL hard drive subsystem with
+eachother.
+
+The first important point is how much DOS memory each of the drives
+take:
+
+      Seagate       0 bytes
+      NJRAMD      705 bytes
+      EMSDISK     836 bytes
+      VDISK.SYS  1048 bytes
+
+Of course, the Seagate doesn't require any DOS memory, as  all of it's
+control routines are stored in the ROM on the controller card.
+
+NJRAMD takes slightly less memory than EMSDISK because I've used some
+extremely efficient programming methods.  Just the bare essentials
+are left in memory when NJRAMD loads.  It seems that EMSDISK leaves
+around a lot of "work space" and "temporary" variables, that don't
+even need to be there.  Much of NJRAMD's code is shorter, also.
+
+VDISK.SYS takes a great deal more memory than NJRAMD because VDISK is
+a much more powerful program, in a way.  It provides code for a RAM
+Disk for either regular DOS RAM, or for the Extended memory that AT
+systems have.  NJRAMD only provides a RAM Disk for the EMS and EEMS
+memory systems.
+
+The other important consideration is speed.  NJRAMD proved faster
+than either of the RAM Drives, and certainly faster than my hard disk
+drive.  (The times for the hard disk drive are included only for a
+reference.)
+
+My system runs a 4.77 MHz NEC V-20 CPU.  I wrote a simple program
+using SYMDEB, Microsoft's Symbolic Debugger, to test the drives.  I
+ran the program three times, and took an average of the three runs.
+
+The first version of the program is simply a loop that executes 10000
+times.  In each iteration, the program reads one 512-byte sector from
+the drive.  The program always reads the same sector.  All in all,
+5,120,000 bytes of data were transferred during the test. These are
+the results:
+
+       Program          Try 1    Try 2     Try 3     Average
+
+      NJRAMD            36.01    36.03     36.02     (36.02)
+      NJRAMD, /S option 35.60    35.71     35.63     (35.65)
+      EMSDISK           36.53    36.73     36.45     (36.55)
+      VDISK.SYS       1:01.46  1:01.38   1:01.42   (1:01.42)
+      Hard Drive      2:47.30  2:47.45   2:47.53   (2:47.43)
+
+
+NJRAMD and EMSDISK ran neck-and-neck for this first test;  NJRAMD was
+only negligably faster.  My hard drive turned out a reasonable time,
+considering that it's not buffered.
+
+It seems strange to me that VDISK.SYS was so much slower than the
+other programs, however.  I checked my tests several times, and they
+seem to be correct.  VDISK.SYS seems to execute with very much
+overhead.  I would have thought that VDISK.SYS would've been *faster*
+than the EMS drives, since VDISK doesn't have to deal with the
+overhead of the EMS manager, as the information is right in standard
+DOS memory, and doesn't need to be bank-switched into place.
+
+The second test is also a loop that executes 10000 times.  Each
+iteration, however, read eight sectors, starting at the seventh
+logical sector of the drive.  In total, 40.960 million bytes of data
+were transferred.  These are the results:
+
+
+       Program          Try 1    Try 2     Try 3     Average
+
+      NJRAMD          1:46.75  1:46.64   1:46.68    (1:46.69)
+      NJRAMD /S       1:45.80  1:45.73   1:45.89    (1:45.80)
+      EMSDISK         2:11.07  2:11.30   2:11.12    (2:11.19)
+      VDISK.SYS       1:17.78  1:17.70   1:17.60    (1:17.69)
+      Hard Drive      5:34.10  5:33.96   5:34.12    (5:34.06)
+
+
+In this test, NJRAMD's special optimizations are shown.  Since DOS,
+and application programs under DOS, often read or write several
+sectors in a row, I thought it would be beneficial if NJRAMD had
+logic to account for this.  As the results show, the idea payed off.
+The program became significantly faster than EMSDISK.
+
+VDISK.SYS had only slightly slower times, which, again, suggests that
+the program has some sort of large speed overhead, wasting time in
+its execution.
+
+My Hard Drive again performed as expected.  The mechanical device
+read the data at approximately 122000 bytes per second, which is
+rather good, considering the limit placed on DMA transfers in my
+relatively slow system.
+
+NJRAMD is avaialable in the file NJRAMD.ARC, here in the IBM Software
+Forum.  If you'd like a copy of the program on a special
+pre-registered disk, send $10 to
+
+
+     Mike Blaszczak
+     112 Verlinden Drive
+     Monroeville,  PA  15146-2041
+
+
+13 May 1987
+
+
